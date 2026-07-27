@@ -65,3 +65,22 @@ def realizar_compra_db(data: dict):
     finally:
         cur.close()
         conn.close()
+
+def verificar_cliente_db(codigo_cli: str):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "SELECT * FROM cliente_ms WHERE codigo_cli = %s",
+            (codigo_cli,)
+        )
+        cliente = cur.fetchone()
+        if cliente:
+            return {"estado": "éxito", "mensaje": "cliente encontrado"}
+        else:
+            raise Exception("El código de cliente no existe en el sistema.")
+    except Exception as e:
+        raise e
+    finally:
+        cur.close()
+        conn.close()
