@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from api.models import crear_tablas
-from api.crud import registrar_cliente_db, realizar_compra_db
+from api.crud import registrar_cliente_db, realizar_compra_db, verificar_cliente_db
 
 app = FastAPI()
 
@@ -12,6 +12,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/api/verificar_cliente/{codigo_cli}")
+def verificar_cliente(codigo_cli: str):
+    try:
+        return verificar_cliente_db(codigo_cli)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @app.on_event("startup")
 def startup_event():
