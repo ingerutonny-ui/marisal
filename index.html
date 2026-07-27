@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marisal - Registro de Cliente</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('nube.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Pantalla de Carga */
+        #loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            width: 350px;
+        }
+
+        #loader-container img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #007bff;
+            transition: width 0.03s linear;
+        }
+
+        #progress-text {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Formulario (Oculto inicialmente) */
+        #form-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            width: 380px;
+        }
+
+        #form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input#codigo_cli {
+            text-transform: uppercase;
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #mensaje {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla de Carga -->
+    <div id="loader-container">
+        <img src="marisal--2026.png" alt="Logo Marisal">
+        <div class="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="progress-text">0%</div>
+    </div>
+
+    <!-- Formulario de Registro -->
+    <div id="form-container">
+        <h2>Registro de Cliente</h2>
+        <form id="cliente-form">
+            <div class="form-group">
+                <label for="nombre_cli">Nombre Completo:</label>
+                <input type="text" id="nombre_cli" required placeholder="Ej. Juan Perez">
+            </div>
+            <div class="form-group">
+                <label for="num_cel_cli">Número de Celular:</label>
+                <input type="text" id="num_cel_cli" required placeholder="Ej. 71234567" maxlength="10">
+            </div>
+            <div class="form-group">
+                <label for="codigo_cli">Código de Cliente (Automático):</label>
+                <input type="text" id="codigo_cli" readonly>
+            </div>
+            <button type="submit">Registrar Cliente</button>
+        </form>
+        <div id="mensaje"></div>
+    </div>
+
+    <script>
+        // Animación de la barra de carga (Duración: 3 segundos = 3000ms)
+        let width = 0;
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const loaderContainer = document.getElementById("loader-container");
+        const formContainer = document.getElementById("form-container");
+
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                loaderContainer.style.display = "none";
+                formContainer.style.display = "block";
+            } else {
+                width++;
+                progressBar.style.width = width + "%";
+                progressText.innerText = width + "%";
+            }
+        }, 30); // 30ms * 100 = 3000ms (3 segundos)
+
+        // Generación automática del código de cliente (Iniciales del nombre + 2 últimos dígitos del celular)
+        const nombreInput = document.getElementById("nombre_cli");
+        const celularInput = document.getElementById("num_cel_cli");
+        const codigoInput = document.getElementById("codigo_cli");
+
+        function generarCodigo() {
+            const nombre = nombreInput.value.trim();
+            const celular = celularInput.value.trim();
+
+            if (nombre && celular.length >= 2) {
+                const palabras = nombre.split(" ");
+                let iniciales = "";
+                palabras.forEach(p => {
+                    if (p.length > 0) iniciales += p[0].toUpperCase();
+                });
+                const ultimosDigitos = celular.slice(-2);
+                codigoInput.value = (iniciales + ultimosDigitos).toUpperCase();
+            } else {
+                codigoInput.value = "";
+            }
+        }
+
+        nombreInput.addEventListener("input", generarCodigo);
+        celularInput.addEventListener("input", generarCodigo);
+
+        // Envío de datos a la API en Render
+        document.getElementById("cliente-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const data = {
+                codigo_cli: codigoInput.value,
+                nombre_cli: nombreInput.value.trim(),
+                num_cel_cli: celularInput.value.trim()
+            };
+
+            const mensajeDiv = document.getElementById("mensaje");
+            mensajeDiv.style.color = "#333";
+            mensajeDiv.innerText = "Registrando...";
+
+            try {
+                const response = await fetch("https://marisal.onrender.com/api/registrar_cliente", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok) {
+                    mensajeDiv.style.color = "green";
+                    mensajeDiv.innerText = "¡Cliente registrado con éxito!";
+                    setTimeout(() => {
+                        document.getElementById("cliente-form").reset();
+                        codigoInput.value = "";
+                        mensajeDiv.innerText = "";
+                    }, 2000);
+                } else {
+                    mensajeDiv.style.color = "red";
+                    mensajeDiv.innerText = "Error: " + (resultado.detail || "No se pudo registrar");
+                }
+            } catch (error) {
+                mensajeDiv.style.color = "red";
+                mensajeDiv.innerText = "Error de conexión con la API.";
+            }
+        });
+    </script>
+</body>
+</html>
