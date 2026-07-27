@@ -257,15 +257,18 @@
 
                 const resultado = await response.json();
 
-                if (response.ok) {
-                    mensajeDiv.style.color = "#008000";
-                    mensajeDiv.innerText = "¡CLIENTE REGISTRADO CON ÉXITO!";
-                    setTimeout(() => {
-                        document.getElementById("cliente-form").reset();
-                        codigoInput.value = "";
-                        mensajeDiv.innerText = "";
-                    }, 2000);
-                } else {
+            if (response.ok) {
+                // Guardar el código en localStorage para usarlo en la galería
+                localStorage.setItem("codigo_cli", codigoInput.value);
+
+                mensajeDiv.style.color = "#008000";
+                mensajeDiv.innerText = "¡CLIENTE REGISTRADO CON ÉXITO!";
+                
+                // Redirigir a la galería después de un pequeño momento
+                setTimeout(() => {
+                    window.location.href = "galeria.html";
+                }, 1000);
+            } else {
                     mensajeDiv.style.color = "#b22222";
                     mensajeDiv.innerText = "ERROR: " + (resultado.detail || "NO SE PUDO REGISTRAR");
                 }
