@@ -1,7 +1,11 @@
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = "postgresql://neondb_owner:npg_j9qwPYO41HnM@ep-fragrant-base-axtstsvs-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require"
+# Configura tu URL de conexión a la base de datos de Neon aquí
+SQLALCHEMY_DATABASE_URL = "postgresql://usuario:password@host/database"
 
-def get_db_connection():
-    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
