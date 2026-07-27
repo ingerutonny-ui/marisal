@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marisal - Registro de Cliente</title>
+    <title>MARISAL - REGISTRO DE CLIENTE</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-transform: uppercase;
         }
 
         body {
@@ -22,108 +23,141 @@
             align-items: center;
         }
 
-        /* Pantalla de Carga */
+        /* Pantalla de Carga - Estilo Vidrio Húmedo y Elegante */
         #loader-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            width: 350px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            width: 420px;
         }
 
         #loader-container img {
-            width: 150px;
+            width: 280px;
             height: auto;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 20px;
-            background-color: #e0e0e0;
+            height: 18px;
+            background-color: rgba(255, 255, 255, 0.5);
             border-radius: 10px;
             overflow: hidden;
-            border: 1px solid #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
         #progress-bar {
             width: 0%;
             height: 100%;
-            background-color: #007bff;
+            background: linear-gradient(90deg, #ff69b4, #00bfff);
             transition: width 0.03s linear;
+            border-radius: 10px;
         }
 
         #progress-text {
-            margin-top: 10px;
+            margin-top: 15px;
             font-weight: bold;
-            color: #333;
+            color: #ffffff;
+            font-size: 16px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Formulario (Oculto inicialmente) */
+        /* Formulario - Estilo Vidrio Húmedo y Elegante */
         #form-container {
             display: none;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            width: 380px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            width: 420px;
         }
 
         #form-container h2 {
             text-align: center;
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+            font-size: 22px;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
+            margin-bottom: 8px;
+            color: #222;
             font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.5px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
             font-size: 14px;
+            color: #000;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #ff69b4;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
         }
 
         .form-group input#codigo_cli {
-            text-transform: uppercase;
-            background-color: #e9ecef;
+            background-color: rgba(233, 236, 239, 0.7);
             font-weight: bold;
+            color: #00bfff;
         }
 
         button {
             width: 100%;
-            padding: 10px;
-            background-color: #28a745;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff69b4, #00bfff);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
             font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+            transition: all 0.3s ease;
         }
 
         button:hover {
-            background-color: #218838;
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
         }
 
         #mensaje {
             margin-top: 15px;
             text-align: center;
             font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
         }
     </style>
 </head>
@@ -131,7 +165,7 @@
 
     <!-- Pantalla de Carga -->
     <div id="loader-container">
-        <img src="marisal--2026.png" alt="Logo Marisal">
+        <img src="marisal--2026.png" alt="LOGO MARISAL">
         <div class="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
@@ -140,27 +174,26 @@
 
     <!-- Formulario de Registro -->
     <div id="form-container">
-        <h2>Registro de Cliente</h2>
+        <h2>REGISTRO DE CLIENTE</h2>
         <form id="cliente-form">
             <div class="form-group">
-                <label for="nombre_cli">Nombre Completo:</label>
-                <input type="text" id="nombre_cli" required placeholder="Ej. Juan Perez">
+                <label for="nombre_cli">NOMBRE COMPLETO:</label>
+                <input type="text" id="nombre_cli" required placeholder="EJ. JUAN PEREZ">
             </div>
             <div class="form-group">
-                <label for="num_cel_cli">Número de Celular:</label>
-                <input type="text" id="num_cel_cli" required placeholder="Ej. 71234567" maxlength="10">
+                <label for="num_cel_cli">NÚMERO DE CELULAR:</label>
+                <input type="text" id="num_cel_cli" required placeholder="EJ. 71234567" maxlength="10">
             </div>
             <div class="form-group">
-                <label for="codigo_cli">Código de Cliente (Automático):</label>
+                <label for="codigo_cli">CÓDIGO DE CLIENTE (AUTOMÁTICO):</label>
                 <input type="text" id="codigo_cli" readonly>
             </div>
-            <button type="submit">Registrar Cliente</button>
+            <button type="submit">REGISTRAR CLIENTE</button>
         </form>
         <div id="mensaje"></div>
     </div>
 
     <script>
-        // Animación de la barra de carga (Duración: 3 segundos = 3000ms)
         let width = 0;
         const progressBar = document.getElementById("progress-bar");
         const progressText = document.getElementById("progress-text");
@@ -177,9 +210,8 @@
                 progressBar.style.width = width + "%";
                 progressText.innerText = width + "%";
             }
-        }, 30); // 30ms * 100 = 3000ms (3 segundos)
+        }, 30);
 
-        // Generación automática del código de cliente (Iniciales del nombre + 2 últimos dígitos del celular)
         const nombreInput = document.getElementById("nombre_cli");
         const celularInput = document.getElementById("num_cel_cli");
         const codigoInput = document.getElementById("codigo_cli");
@@ -204,7 +236,6 @@
         nombreInput.addEventListener("input", generarCodigo);
         celularInput.addEventListener("input", generarCodigo);
 
-        // Envío de datos a la API en Render
         document.getElementById("cliente-form").addEventListener("submit", async function(e) {
             e.preventDefault();
 
@@ -215,8 +246,8 @@
             };
 
             const mensajeDiv = document.getElementById("mensaje");
-            mensajeDiv.style.color = "#333";
-            mensajeDiv.innerText = "Registrando...";
+            mensajeDiv.style.color = "#1a1a1a";
+            mensajeDiv.innerText = "REGISTRANDO...";
 
             try {
                 const response = await fetch("https://marisal.onrender.com/api/registrar_cliente", {
@@ -230,20 +261,20 @@
                 const resultado = await response.json();
 
                 if (response.ok) {
-                    mensajeDiv.style.color = "green";
-                    mensajeDiv.innerText = "¡Cliente registrado con éxito!";
+                    mensajeDiv.style.color = "#006400";
+                    mensajeDiv.innerText = "¡CLIENTE REGISTRADO CON ÉXITO!";
                     setTimeout(() => {
                         document.getElementById("cliente-form").reset();
                         codigoInput.value = "";
                         mensajeDiv.innerText = "";
                     }, 2000);
                 } else {
-                    mensajeDiv.style.color = "red";
-                    mensajeDiv.innerText = "Error: " + (resultado.detail || "No se pudo registrar");
+                    mensajeDiv.style.color = "#8b0000";
+                    mensajeDiv.innerText = "ERROR: " + (resultado.detail || "NO SE PUDO REGISTRAR");
                 }
             } catch (error) {
-                mensajeDiv.style.color = "red";
-                mensajeDiv.innerText = "Error de conexión con la API.";
+                mensajeDiv.style.color = "#8b0000";
+                mensajeDiv.innerText = "ERROR DE CONEXIÓN CON LA API.";
             }
         });
     </script>
