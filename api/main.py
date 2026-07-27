@@ -15,7 +15,7 @@ app.add_middleware(
 )
 
 # Cadena de conexión a Neon (reemplaza con tu URL real de Neon)
-DATABASE_URL = "tu_cadena_de_conexion_de_neon_aqui"
+DATABASE_URL = "postgresql://neondb_owner:npg_j9qwPYO4lHnM@ep-fragrant-base-axtstsvs-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 def get_db_connection():
     return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
