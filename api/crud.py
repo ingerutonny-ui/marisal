@@ -9,11 +9,16 @@ def registrar_cliente_db(data: dict):
         num_cel_cli = data.get("num_cel_cli")
 
         cur.execute(
-            "INSERT INTO CLIENTE_MS (codigo_cli, nombre_cli, num_cel_cli) VALUES (%s, %s, %s) ON CONFLICT (codigo_cli) DO NOTHING",
+            """
+            INSERT INTO CLIENTE_MS (codigo_cli, nombre_cli, num_cel_cli) 
+            VALUES (%s, %s, %s) 
+            ON CONFLICT (codigo_cli) DO UPDATE 
+            SET nombre_cli = EXCLUDED.nombre_cli, num_cel_cli = EXCLUDED.num_cel_cli
+            """,
             (codigo_cli, nombre_cli, num_cel_cli)
         )
         conn.commit()
-        return {"status": "success", "mensaje": "Cliente registrado correctamente"}
+        return {"estado": "éxito", "mensaje": "cliente registrado correctamente"}
     except Exception as e:
         conn.rollback()
         raise e
@@ -28,22 +33,32 @@ def realizar_compra_db(data: dict):
         codigo_cli = data.get("codigo_cli")
         lugar_ven = data.get("lugar_ven")
         total_his = data.get("total_his")
-        productos = data.get("productos")
+        productos = data.get("productos", [])
 
         cur.execute(
-            "INSERT INTO HISTORIAL_MS (codigo_cli, lugar_ven, total_his) VALUES (%s, %s, %s) RETURNING codigo_his",
+            """
+            INSERT INTO HISTORIAL_MS (codigo_cli, lugar_ven, total_his) 
+            VALUES (%s, %s, %s) RETURNING codigo_his
+            """,
             (codigo_cli, lugar_ven, total_his)
         )
-        codigo_his = cur.fetchone()["codigo_his"]
+        codigo_his = cur.fetchone()[0]
 
-        for item in productos:
+        for prod in productos:
+            codigo_pro = prod.get("codigo_pro")
+            cantidad_ven = prod.get("cantidad_ven")
+            total_ven = prod.get("total_ven")
+
             cur.execute(
-                "INSERT INTO VENTA_MS (codigo_his, codigo_pro, cantidad_ven, total_ven) VALUES (%s, %s, %s, %s)",
-                (codigo_his, item["codigo_pro"], item["cantidad_ven"], item["total_ven"])
+                """
+                INSERT INTO VENTA_MS (codigo_his, codigo_pro, cantidad_ven, total_ven) 
+                VALUES (%s, %s, %s, %s)
+                """,
+                (codigo_his, codigo_pro, cantidad_ven, total_ven)
             )
 
         conn.commit()
-        return {"status": "success", "codigo_his": codigo_his, "mensaje": "Pedido registrado con éxito"}
+        return {"estado": "éxito", "mensaje": "compra realizada correctamente", "codigo_his": codigo_his}
     except Exception as e:
         conn.rollback()
         raise e
