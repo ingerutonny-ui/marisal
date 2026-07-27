@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MARISAL - REGISTRO DE CLIENTE</title>
+    <title>MARISAL - ACCESO</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,55 +23,8 @@
             align-items: center;
         }
 
-        /* Pantalla de Carga - Tarjeta limpia con fondo blanco translúcido y sombra suave */
-        #loader-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 45px 35px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            width: 380px;
-        }
-
-        #loader-container img {
-            width: 280px;
-            height: auto;
-            margin-bottom: 25px;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background-color: rgba(0, 0, 0, 0.08);
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff69b4, #00bfff);
-            transition: width 0.03s linear;
-            border-radius: 6px;
-        }
-
-        #progress-text {
-            margin-top: 12px;
-            font-weight: bold;
-            color: #333333;
-            font-size: 15px;
-            letter-spacing: 1px;
-        }
-
-        /* Formulario - Estilo armónico con la tarjeta de carga */
-        #form-container {
+        /* Contenedores Generales de Tarjetas */
+        .card-container {
             display: none;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -83,7 +36,11 @@
             width: 400px;
         }
 
-        #form-container h2 {
+        .card-container.active {
+            display: block;
+        }
+
+        .card-container h2 {
             text-align: center;
             margin-bottom: 22px;
             color: #1a1a1a;
@@ -122,14 +79,39 @@
             box-shadow: 0 0 8px rgba(255, 105, 180, 0.25);
         }
 
-        .form-group input#codigo_cli {
-            background-color: #eef2f7;
-            font-weight: bold;
-            color: #ff1493;
-            font-size: 20px;
+        /* Estilo específico para captcha visual */
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        button {
+        #captcha-display {
+            flex: 1;
+            background: linear-gradient(135deg, #eef2f7, #d4dce6);
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            letter-spacing: 4px;
+            color: #ff1493;
+            border-radius: 10px;
+            border: 1px dashed #b0c4de;
+            user-select: none;
+        }
+
+        .btn-refresh {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button.action-btn {
             width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, #ff69b4, #00bfff);
@@ -144,13 +126,30 @@
             transition: all 0.3s ease;
         }
 
-        button:hover {
+        button.action-btn:hover {
             opacity: 0.95;
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
         }
 
-        #mensaje {
+        .switch-link {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .switch-link a {
+            color: #00bfff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .switch-link a:hover {
+            text-decoration: underline;
+        }
+
+        #mensaje-login, #mensaje-registro {
             margin-top: 15px;
             text-align: center;
             font-weight: bold;
@@ -160,17 +159,32 @@
 </head>
 <body>
 
-    <!-- Pantalla de Carga -->
-    <div id="loader-container">
-        <img src="marisal--2026.png" alt="LOGO MARISAL">
-        <div class="progress-bar-container">
-            <div id="progress-bar"></div>
+    <!-- VISTA 1: INGRESO CON CÓDIGO Y CAPTCHA -->
+    <div id="view-login" class="card-container active">
+        <h2>ACCESO CLIENTES</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="input-codigo">TU CÓDIGO DE CLIENTE:</label>
+                <input type="text" id="input-codigo" required placeholder="EJ. RP73">
+            </div>
+            <div class="form-group">
+                <label>VERIFICACIÓN CAPTCHA:</label>
+                <div class="captcha-box">
+                    <div id="captcha-display">ABCD</div>
+                    <button type="button" class="btn-refresh" onclick="generarCaptcha()">↻</button>
+                </div>
+                <input type="text" id="input-captcha" required placeholder="ESCRIBE EL CÓDIGO">
+            </div>
+            <button type="submit" class="action-btn">INGRESAR A GALERÍA</button>
+        </form>
+        <div class="switch-link">
+            ¿NO TIENES CÓDIGO? <a onclick="cambiarVista('registro')">REGÍSTRATE AQUÍ</a>
         </div>
-        <div id="progress-text">0%</div>
+        <div id="mensaje-login"></div>
     </div>
 
-    <!-- Formulario de Registro -->
-    <div id="form-container">
+    <!-- VISTA 2: REGISTRO DE CLIENTE NUEVO (Tu diseño original) -->
+    <div id="view-registro" class="card-container">
         <h2>REGISTRO DE CLIENTE</h2>
         <form id="cliente-form">
             <div class="form-group">
@@ -183,37 +197,74 @@
             </div>
             <div class="form-group">
                 <label for="codigo_cli">TÚ CÓDIGO ES:</label>
-                <input type="text" id="codigo_cli" readonly>
+                <input type="text" id="codigo_cli" readonly style="background-color: #eef2f7; font-weight: bold; color: #ff1493; font-size: 20px;">
             </div>
-            <button type="submit">REGISTRAR CLIENTE</button>
+            <button type="submit" class="action-btn">REGISTRAR CLIENTE</button>
         </form>
-        <div id="mensaje"></div>
+        <div class="switch-link">
+            ¿YA TIENES CÓDIGO? <a onclick="cambiarVista('login')">INICIA SESIÓN</a>
+        </div>
+        <div id="mensaje-registro"></div>
     </div>
 
     <script>
-        let width = 0;
-        const progressBar = document.getElementById("progress-bar");
-        const progressText = document.getElementById("progress-text");
-        const loaderContainer = document.getElementById("loader-container");
-        const formContainer = document.getElementById("form-container");
+        let codigoCaptchaActual = "";
 
-        const interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
-                loaderContainer.style.display = "none";
-                formContainer.style.display = "block";
+        // Funcionalidad para alternar vistas
+        function cambiarVista(vista) {
+            if (vista === 'login') {
+                document.getElementById('view-registro').classList.remove('active');
+                document.getElementById('view-login').classList.add('active');
+                generarCaptcha();
             } else {
-                width++;
-                progressBar.style.width = width + "%";
-                progressText.innerText = width + "%";
+                document.getElementById('view-login').classList.remove('active');
+                document.getElementById('view-registro').classList.add('active');
             }
-        }, 30);
+        }
 
+        // Generador de Captcha simple
+        function generarCaptcha() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let captcha = "";
+            for (let i = 0; i < 4; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            codigoCaptchaActual = captcha;
+            document.getElementById("captcha-display").innerText = captcha;
+        }
+
+        // Inicializar captcha al cargar
+        generarCaptcha();
+
+        // Lógica de validación de Login con Captcha (Podemos validar contra la BD o localmente si existe)
+        document.getElementById("login-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const codigoIngresado = document.getElementById("input-codigo").value.trim().toUpperCase();
+            const captchaIngresado = document.getElementById("input-captcha").value.trim().toUpperCase();
+            const mensajeDiv = document.getElementById("mensaje-login");
+
+            if (captchaIngresado !== codigoCaptchaActual) {
+                mensajeDiv.style.color = "#b22222";
+                mensajeDiv.innerText = "ERROR: CAPTCHA INCORRECTO";
+                generarCaptcha();
+                return;
+            }
+
+            // Guardar código y pasar a galería
+            localStorage.setItem("codigo_cli", codigoIngresado);
+            mensajeDiv.style.color = "#008000";
+            mensajeDiv.innerText = "¡ACCESO EXITOSO!";
+            setTimeout(() => {
+                window.location.href = "galeria.html";
+            }, 800);
+        });
+
+        // Lógica de autogeneración de código en Registro
         const nombreInput = document.getElementById("nombre_cli");
         const celularInput = document.getElementById("num_cel_cli");
         const codigoInput = document.getElementById("codigo_cli");
 
-        function generarCodigo() {
+        function generarCodigoRegistro() {
             const nombre = nombreInput.value.trim();
             const celular = celularInput.value.trim();
 
@@ -230,9 +281,10 @@
             }
         }
 
-        nombreInput.addEventListener("input", generarCodigo);
-        celularInput.addEventListener("input", generarCodigo);
+        nombreInput.addEventListener("input", generarCodigoRegistro);
+        celularInput.addEventListener("input", generarCodigoRegistro);
 
+        // Envío de Registro a FastAPI
         document.getElementById("cliente-form").addEventListener("submit", async function(e) {
             e.preventDefault();
 
@@ -242,7 +294,7 @@
                 num_cel_cli: celularInput.value.trim()
             };
 
-            const mensajeDiv = document.getElementById("mensaje");
+            const mensajeDiv = document.getElementById("mensaje-registro");
             mensajeDiv.style.color = "#333333";
             mensajeDiv.innerText = "REGISTRANDO...";
 
@@ -257,24 +309,20 @@
 
                 const resultado = await response.json();
 
-            if (response.ok) {
-                // Guardar el código en localStorage para usarlo en la galería
-                localStorage.setItem("codigo_cli", codigoInput.value);
-
-                mensajeDiv.style.color = "#008000";
-                mensajeDiv.innerText = "¡CLIENTE REGISTRADO CON ÉXITO!";
-                
-                // Redirigir a la galería después de un pequeño momento
-                setTimeout(() => {
-                    window.location.href = "galeria.html";
-                }, 1000);
-            } else {
+                if (response.ok) {
+                    localStorage.setItem("codigo_cli", codigoInput.value);
+                    mensajeDiv.style.color = "#008000";
+                    mensajeDiv.innerText = "¡CLIENTE REGISTRADO CON ÉXITO!";
+                    setTimeout(() => {
+                        window.location.href = "galeria.html";
+                    }, 1000);
+                } else {
                     mensajeDiv.style.color = "#b22222";
                     mensajeDiv.innerText = "ERROR: " + (resultado.detail || "NO SE PUDO REGISTRAR");
                 }
             } catch (error) {
                 mensajeDiv.style.color = "#b22222";
-                    mensajeDiv.innerText = "ERROR DE CONEXIÓN CON LA API.";
+                mensajeDiv.innerText = "ERROR DE CONEXIÓN CON LA API.";
             }
         });
     </script>
