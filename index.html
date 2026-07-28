@@ -38,14 +38,11 @@
             transition: opacity 0.5s ease;
         }
 
-        .loader-logo {
-            font-size: 42px;
-            font-weight: bold;
-            color: #ffffff;
-            letter-spacing: 4px;
+        .loader-logo-img {
+            max-width: 220px;
+            height: auto;
             margin-bottom: 25px;
-            text-transform: uppercase;
-            text-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
+            object-fit: contain;
         }
 
         .progress-container {
@@ -175,7 +172,7 @@
         }
 
         .register-link {
-            margin-top: 20px;
+            main-top: 20px;
             font-size: 13px;
             color: #666;
         }
@@ -194,7 +191,7 @@
 <body>
 
     <div id="loader-screen">
-        <div class="loader-logo">MARISAL</div>
+        <img src="marisal--2026.png" alt="Marisal Logo" class="loader-logo-img">
         <div class="progress-container">
             <div id="progress-bar" class="progress-bar"></div>
         </div>
