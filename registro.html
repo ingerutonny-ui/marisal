@@ -100,7 +100,6 @@
             text-transform: uppercase;
         }
 
-        /* Estilo especial para el campo de código autogenerado */
         #codigo_generado {
             background: rgba(0, 191, 255, 0.2);
             border-color: #00bfff;
@@ -161,12 +160,12 @@
 
         <div class="input-group">
             <label for="nombre_cliente">NOMBRE COMPLETO:</label>
-            <input type="text" id="nombre_cliente" placeholder="EJ: JUAN PÉREZ" autocomplete="off" oninput="actualizarCodigo()">
+            <input type="text" id="nombre_cliente" placeholder="EJ: JUAN PÉREZ" autocomplete="off">
         </div>
 
         <div class="input-group">
             <label for="celular_cliente">CELULAR:</label>
-            <input type="text" id="celular_cliente" placeholder="EJ: 70000000" autocomplete="off" oninput="actualizarCodigo()">
+            <input type="text" id="celular_cliente" placeholder="EJ: 70000000" autocomplete="off">
         </div>
 
         <div class="input-group">
@@ -197,12 +196,11 @@
             
             let letrasNombre = "";
             if (nombre) {
-                // Tomar las primeras letras o iniciales (por ejemplo, primeras 2 o 3 letras de la primera palabra o de todo)
                 const palabras = nombre.split(" ");
-                if (palabras.length > 0 && palabras[0].length >= 2) {
+                if (palabras.length > 0 && palabras[0].length >= 3) {
                     letrasNombre = palabras[0].substring(0, 3);
                 } else {
-                    letrasNombre = nombre.substring(0, 3);
+                    letrasNombre = nombre.replace(/\s+/g, "").substring(0, 3);
                 }
             }
 
@@ -225,8 +223,8 @@
             const celular = document.getElementById("celular_cliente").value.trim();
             const codigo = document.getElementById("codigo_generado").value.trim();
 
-            if (!nombre || !celular) {
-                alert("Por favor, completa todos los campos.");
+            if (!nombre || !celular || !codigo) {
+                alert("POR FAVOR, COMPLETA TODOS LOS CAMPOS.");
                 return;
             }
 
@@ -237,20 +235,20 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        nombre: nombre,
-                        celular: celular,
-                        codigo: codigo
+                        codigo_cli: codigo,
+                        nombre_cli: nombre,
+                        num_cel_cli: celular
                     })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || "No se pudo completar el registro.");
+                    throw new Error(errorData.detail || "NO SE PUDO COMPLETAR EL REGISTRO.");
                 }
 
                 const data = await response.json();
 
-                alert(`¡REGISTRO EXITOSO! TU CÓDIGO ASIGNADO ES: ${data.codigo}`);
+                alert(`¡REGISTRO EXITOSO! TU CÓDIGO ASIGNADO ES: ${codigo}`);
                 window.location.href = "index.html";
 
             } catch (error) {
