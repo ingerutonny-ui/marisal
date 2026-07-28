@@ -23,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* Pantalla de Carga de 0 a 100% con Logo */
         #loader-screen {
             position: fixed;
             top: 0;
@@ -74,7 +73,6 @@
             letter-spacing: 1px;
         }
 
-        /* Tarjeta de Login Principal */
         .login-card {
             background: rgba(255, 255, 255, 0.95);
             padding: 40px 30px;
@@ -195,7 +193,6 @@
 </head>
 <body>
 
-    <!-- Pantalla de Carga -->
     <div id="loader-screen">
         <div class="loader-logo">MARISAL</div>
         <div class="progress-container">
@@ -204,7 +201,6 @@
         <div id="progress-text" class="progress-text">0%</div>
     </div>
 
-    <!-- Tarjeta de Acceso -->
     <div class="login-card" id="login-card">
         <h2>ACCESO CLIENTES</h2>
         
@@ -233,7 +229,6 @@
         const API_URL = "https://marisal.onrender.com";
         let codigoCaptchaActual = "448Y";
 
-        // Animación de la barra de carga de 0 a 100%
         function iniciarCarga() {
             let width = 0;
             const bar = document.getElementById("progress-bar");
@@ -291,7 +286,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert("Acceso exitoso.");
+                    window.location.href = "galeria.html";
                 } else {
                     alert(data.detail || "El código de cliente no existe en el sistema.");
                 }
