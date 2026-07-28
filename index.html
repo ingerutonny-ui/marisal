@@ -25,14 +25,60 @@
             overflow: hidden;
         }
 
+        /* PANTALLA DE CARGA BLANCA ELEGANTE */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-logo {
+            width: 180px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 250px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff69b4, #00bfff);
+            transition: width 0.1s linear;
+        }
+
+        .loading-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #475569;
+            letter-spacing: 1px;
+        }
+
+        /* CONTENEDOR PRINCIPAL / FORMULARIO BLANCO ELEGANTE */
         .login-card {
-            background: rgba(15, 23, 42, 0.88);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             padding: 25px 30px;
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 400px;
             display: flex;
@@ -42,7 +88,7 @@
             transform-origin: center;
         }
 
-        /* ESCALA PROPORCIONAL SOLO PARA COMPUTADORAS (Mantiene el diseño intacto pero más grande) */
+        /* ESCALA PROPORCIONAL SOLO PARA COMPUTADORAS */
         @media (min-width: 768px) {
             .login-card {
                 transform: scale(1.35);
@@ -63,7 +109,7 @@
 
         h2 {
             text-align: center;
-            color: #ffffff;
+            color: #1e293b;
             font-size: 17px;
             letter-spacing: 1px;
             margin-bottom: -2px;
@@ -79,36 +125,36 @@
         label {
             font-size: 11px;
             font-weight: bold;
-            color: #cbd5e1;
+            color: #475569;
             letter-spacing: 1px;
         }
 
         input {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid #cbd5e1;
             border-radius: 12px;
             font-size: 13px;
             outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
+            background: #f8fafc;
+            color: #1e293b;
             transition: all 0.3s ease;
         }
 
         input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: #94a3b8;
         }
 
         input:focus {
             border-color: #00bfff;
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+            background: #ffffff;
         }
 
         .captcha-box {
             display: flex;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
             border-radius: 12px;
             padding: 8px 14px;
             justify-content: space-between;
@@ -124,14 +170,14 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #cbd5e1;
+            color: #64748b;
             font-size: 14px;
             transition: transform 0.3s ease;
         }
 
         .refresh-btn:hover {
             transform: rotate(180deg);
-            color: #ffffff;
+            color: #1e293b;
         }
 
         .submit-btn {
@@ -159,7 +205,7 @@
         .back-link {
             text-align: center;
             font-size: 11px;
-            color: #94a3b8;
+            color: #64748b;
             margin-top: -2px;
         }
 
@@ -176,6 +222,15 @@
 </head>
 <body>
 
+    <!-- PANTALLA DE CARGA -->
+    <div id="loading-screen">
+        <img src="marisal--2026.png" alt="Logo" class="loading-logo">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="loading-text" id="loadingText">CARGANDO... 0%</div>
+    </div>
+
     <div class="login-card">
         <div class="logo-container">
             <img src="marisal--2026.png" alt="LOGO MARISAL">
@@ -185,7 +240,7 @@
 
         <div class="input-group">
             <label for="codigo_cliente">TU CÓDIGO DE CLIENTE:</label>
-            <input type="text" id="codigo_cliente" placeholder="EJ: JM89" autocomplete="off">
+            <input type="text" id="codigo_cliente" placeholder="EJ: RP73" autocomplete="off">
         </div>
 
         <div class="input-group">
@@ -205,6 +260,26 @@
     </div>
 
     <script>
+        // Simulación de la barra de carga inicial
+        let progress = 0;
+        const progressBar = document.getElementById("progressBar");
+        const loadingText = document.getElementById("loadingText");
+        const loadingScreen = document.getElementById("loading-screen");
+
+        const interval = setInterval(() => {
+            progress += 2;
+            if (progress <= 100) {
+                progressBar.style.width = progress + "%";
+                loadingText.innerText = "CARGANDO... " + progress + "%";
+            } else {
+                clearInterval(interval);
+                loadingScreen.style.opacity = "0";
+                setTimeout(() => {
+                    loadingScreen.style.display = "none";
+                }, 500);
+            }
+        }, 20);
+
         let textoCaptchaActual = "";
 
         function generarCaptcha() {
@@ -247,7 +322,6 @@
 
                 const data = await response.json();
                 
-                // Guardar sesión y redirigir a galería
                 localStorage.setItem("cliente_actual", JSON.stringify(data));
                 window.location.href = "galeria.html";
 
