@@ -154,12 +154,15 @@
     </footer>
 
     <script>
-            // Recuperar el código ingresado en el login o asignarlo si viene vacío
-            let codigoCliente = localStorage.getItem("codigo_cliente");
-            if (!codigoCliente) {
-                codigoCliente = "RP73"; // O el código por defecto que corresponda
-            }
-            document.getElementById("etiqueta_codigo").innerText = "CÓDIGO: " + codigoCliente;
+        // Validar acceso estricto por código de cliente
+        const codigoCliente = localStorage.getItem("codigo_cliente");
+
+        if (!codigoCliente) {
+            alert("Acceso denegado. Debe iniciar sesión con un código válido.");
+            window.location.href = "index.html";
+        } else {
+            document.getElementById("display-codigo").innerText = codigoCliente;
+        }
     </script>
 </body>
 </html>
