@@ -148,7 +148,6 @@
             text-decoration: underline;
         }
 
-        /* Estilos para el Modal / Pantalla Emergente de Éxito */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -241,7 +240,7 @@
 
         <div class="input-group">
             <label for="nombre_cliente">NOMBRE COMPLETO:</label>
-            <input type="text" id="nombre_cliente" placeholder="EJ: JUAN PÉREZ" autocomplete="off">
+            <input type="text" id="nombre_cliente" placeholder="EJ: ELENA SUXO" autocomplete="off">
         </div>
 
         <div class="input-group">
@@ -261,7 +260,6 @@
         </div>
     </div>
 
-    <!-- MODAL / PANTALLA CENTRAL DE ÉXITO -->
     <div class="modal-overlay" id="modalExito">
         <div class="modal-card">
             <h3>¡REGISTRO EXITOSO!</h3>
@@ -283,16 +281,18 @@
         });
 
         function actualizarCodigo() {
-            const nombre = document.getElementById("nombre_cliente").value.trim();
+            const nombreCompleto = document.getElementById("nombre_cliente").value.trim();
             const celular = document.getElementById("celular_cliente").value.trim();
             
-            let letrasNombre = "";
-            if (nombre) {
-                const palabras = nombre.split(" ");
-                if (palabras.length > 0 && palabras[0].length >= 3) {
-                    letrasNombre = palabras[0].substring(0, 3);
-                } else {
-                    letrasNombre = nombre.replace(/\s+/g, "").substring(0, 3);
+            let iniciales = "";
+            if (nombreCompleto) {
+                const palabras = nombreCompleto.split(/\s+/).filter(Boolean);
+                if (palabras.length >= 2) {
+                    // Primera letra del primer nombre y primera letra del primer apellido
+                    iniciales = palabras[0].charAt(0) + palabras[1].charAt(0);
+                } else if (palabras.length === 1) {
+                    // Si solo escribió una palabra, toma las dos primeras letras
+                    iniciales = palabras[0].substring(0, 2);
                 }
             }
 
@@ -303,8 +303,8 @@
                 ultimosCel = celular;
             }
 
-            if (letrasNombre || ultimosCel) {
-                document.getElementById("codigo_generado").value = (letrasNombre + ultimosCel).toUpperCase();
+            if (iniciales || ultimosCel) {
+                document.getElementById("codigo_generado").value = (iniciales + ultimosCel).toUpperCase();
             } else {
                 document.getElementById("codigo_generado").value = "";
             }
@@ -340,7 +340,6 @@
 
                 const data = await response.json();
 
-                // Mostrar el modal central con el código generado
                 document.getElementById("codigoModalDisplay").innerText = data.codigo;
                 document.getElementById("modalExito").style.display = "flex";
 
