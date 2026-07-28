@@ -31,7 +31,7 @@ def verificar_cliente(codigo: str):
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "SELECT cliente_ms_codigo_cli, cliente_ms_nombre_cli, cliente_ms_num_cel_cli FROM cliente_ms WHERE cliente_ms_codigo_cli = %s",
+            "SELECT codigo_cli, nombre_cli, num_cel_cli FROM cliente_ms WHERE codigo_cli = %s",
             (codigo.upper(),)
         )
         row = cursor.fetchone()
