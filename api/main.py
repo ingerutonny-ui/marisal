@@ -1,357 +1,84 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MARISAL - REGISTRO</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-transform: uppercase;
+import os
+import psycopg2
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+def get_db_connection():
+    if not DATABASE_URL:
+        raise HTTPException(status_code=500, detail="DATABASE_URL no configurada")
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode="require", connect_timeout=10)
+        return conn
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error de conexión: {str(e)}")
+
+@app.get("/api/verificar_cliente/{codigo}")
+def verificar_cliente(codigo: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT codigo_cli, nombre_cli, num_cel_cli FROM cliente_ms WHERE codigo_cli = %s",
+            (codigo.upper(),)
+        )
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="El código de cliente no existe en el sistema.")
+        return {
+            "codigo": row[0],
+            "nombre": row[1],
+            "celular": row[2]
         }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
 
-        body {
-            background-image: url('nube.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+@app.post("/api/registrar_cliente")
+def registrar_cliente(data: dict):
+    codigo = data.get("codigo_cli")
+    nombre = data.get("nombre_cli")
+    celular = data.get("num_cel_cli")
+
+    if not codigo or not nombre or not celular:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios para el registro.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT codigo_cli FROM cliente_ms WHERE codigo_cli = %s", (codigo.upper(),))
+        if cursor.fetchone():
+            raise HTTPException(status_code=400, detail="El código de cliente ya se encuentra registrado.")
+
+        cursor.execute(
+            "INSERT INTO cliente_ms (codigo_cli, nombre_cli, num_cel_cli) VALUES (%s, %s, %s)",
+            (codigo.upper(), nombre.upper(), celular.upper())
+        )
+        conn.commit()
+        return {
+            "mensaje": "Cliente registrado exitosamente",
+            "codigo": codigo.upper()
         }
-
-        .login-card {
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 25px 30px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: -5px;
-        }
-
-        .logo-container img {
-            width: 180px;
-            height: auto;
-        }
-
-        h2 {
-            text-align: center;
-            color: #ffffff;
-            font-size: 17px;
-            letter-spacing: 1px;
-            margin-bottom: -2px;
-        }
-
-        .input-group {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        label {
-            font-size: 11px;
-            font-weight: bold;
-            color: #cbd5e1;
-            letter-spacing: 1px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            font-size: 13px;
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            transition: all 0.3s ease;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        input:focus {
-            border-color: #00bfff;
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        #nombre_cliente, #celular_cliente {
-            text-transform: uppercase;
-        }
-
-        #codigo_generado {
-            background: rgba(0, 191, 255, 0.2);
-            border-color: #00bfff;
-            color: #00ffff;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #ff69b4, #00bfff);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
-            transition: all 0.3s ease;
-            margin-top: 5px;
-        }
-
-        .submit-btn:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
-        }
-
-        .back-link {
-            text-align: center;
-            font-size: 11px;
-            color: #94a3b8;
-            margin-top: -2px;
-        }
-
-        .back-link a {
-            color: #ff69b4;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* Estilos para el Modal / Pantalla Emergente de Éxito */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-card {
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(0, 191, 255, 0.4);
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            width: 100%;
-            max-width: 380px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            text-align: center;
-            animation: modalScale 0.3s ease-in-out;
-        }
-
-        @keyframes modalScale {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-card h3 {
-            color: #ffffff;
-            font-size: 16px;
-            letter-spacing: 1px;
-        }
-
-        .codigo-destacado {
-            font-size: 32px;
-            font-weight: bold;
-            color: #00ffff;
-            background: rgba(0, 191, 255, 0.15);
-            padding: 12px 20px;
-            border-radius: 16px;
-            border: 2px dashed #00bfff;
-            letter-spacing: 3px;
-            width: 100%;
-        }
-
-        .modal-card p {
-            color: #cbd5e1;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        .modal-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #00bfff, #ff69b4);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .modal-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="login-card">
-        <div class="logo-container">
-            <img src="marisal--2026.png" alt="LOGO MARISAL">
-        </div>
-
-        <h2>REGISTRO DE CLIENTE</h2>
-
-        <div class="input-group">
-            <label for="nombre_cliente">NOMBRE COMPLETO:</label>
-            <input type="text" id="nombre_cliente" placeholder="EJ: JUAN PÉREZ" autocomplete="off">
-        </div>
-
-        <div class="input-group">
-            <label for="celular_cliente">CELULAR:</label>
-            <input type="text" id="celular_cliente" placeholder="EJ: 70000000" autocomplete="off">
-        </div>
-
-        <div class="input-group">
-            <label for="codigo_generado">TU CÓDIGO GENERADO:</label>
-            <input type="text" id="codigo_generado" readonly placeholder="SE GENERARÁ AUTOMÁTICAMENTE">
-        </div>
-
-        <button type="button" class="submit-btn" onclick="registrarCliente()">REGISTRARSE</button>
-
-        <div class="back-link">
-            ¿YA TIENES CÓDIGO? <a href="index.html">INICIA SESIÓN AQUÍ</a>
-        </div>
-    </div>
-
-    <!-- MODAL / PANTALLA CENTRAL DE ÉXITO -->
-    <div class="modal-overlay" id="modalExito">
-        <div class="modal-card">
-            <h3>¡REGISTRO EXITOSO!</h3>
-            <p>TU CÓDIGO DE CLIENTE ASIGNADO ES:</p>
-            <div class="codigo-destacado" id="codigoModalDisplay">---</div>
-            <p>GUARDA TU CÓDIGO PARA PODER INGRESAR AL SISTEMA.</p>
-            <button type="button" class="modal-btn" onclick="irAlLogin()">INICIAR SESIÓN</button>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById("nombre_cliente").addEventListener("input", function (e) {
-            this.value = this.value.toUpperCase();
-            actualizarCodigo();
-        });
-        document.getElementById("celular_cliente").addEventListener("input", function (e) {
-            this.value = this.value.toUpperCase();
-            actualizarCodigo();
-        });
-
-        function actualizarCodigo() {
-            const nombre = document.getElementById("nombre_cliente").value.trim();
-            const celular = document.getElementById("celular_cliente").value.trim();
-            
-            let letrasNombre = "";
-            if (nombre) {
-                const palabras = nombre.split(" ");
-                if (palabras.length > 0 && palabras[0].length >= 3) {
-                    letrasNombre = palabras[0].substring(0, 3);
-                } else {
-                    letrasNombre = nombre.replace(/\s+/g, "").substring(0, 3);
-                }
-            }
-
-            let ultimosCel = "";
-            if (celular.length >= 2) {
-                ultimosCel = celular.slice(-2);
-            } else if (celular.length > 0) {
-                ultimosCel = celular;
-            }
-
-            if (letrasNombre || ultimosCel) {
-                document.getElementById("codigo_generado").value = (letrasNombre + ultimosCel).toUpperCase();
-            } else {
-                document.getElementById("codigo_generado").value = "";
-            }
-        }
-
-        async function registrarCliente() {
-            const nombre = document.getElementById("nombre_cliente").value.trim();
-            const celular = document.getElementById("celular_cliente").value.trim();
-            const codigo = document.getElementById("codigo_generado").value.trim();
-
-            if (!nombre || !celular || !codigo) {
-                alert("POR FAVOR, COMPLETA TODOS LOS CAMPOS.");
-                return;
-            }
-
-            try {
-                const response = await fetch("https://marisal.onrender.com/api/registrar_cliente", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        codigo_cli: codigo,
-                        nombre_cli: nombre,
-                        num_cel_cli: celular
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || "NO SE PUDO COMPLETAR EL REGISTRO.");
-                }
-
-                const data = await response.json();
-
-                // Mostrar el modal central con el código generado
-                document.getElementById("codigoModalDisplay").innerText = data.codigo;
-                document.getElementById("modalExito").style.display = "flex";
-
-            } catch (error) {
-                alert(error.message);
-            }
-        }
-
-        function irAlLogin() {
-            window.location.href = "index.html";
-        }
-    </script>
-</body>
-</html>
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
