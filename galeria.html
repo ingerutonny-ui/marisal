@@ -22,146 +22,254 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 25px;
+            padding: 20px;
+            overflow: hidden;
         }
 
-        /* Cabecera superior */
-        header {
+        /* PANTALLA DE CARGA CON FONDO BLANCO Y ADAPTABLE */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .loading-logo {
+            width: 85%;
+            max-width: 550px;
+            height: auto;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.12));
+        }
+
+        .progress-bar-container {
+            width: 80%;
+            max-width: 450px;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff69b4, #00bfff);
+            transition: width 0.1s linear;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #475569;
+            letter-spacing: 1px;
+        }
+
+        /* HEADER SUPERIOR */
+        .header-top {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 500px;
+            max-width: 1200px;
         }
 
-        header img {
-            width: 230px;
+        .logo-header img {
+            width: 160px;
             height: auto;
         }
 
-        #user-badge {
+        .codigo-badge {
             background: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: bold;
-            color: #ff1493;
-            font-size: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            color: #ff69b4;
+            border: 1px solid rgba(255, 105, 180, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Contenedor Central de Grupos */
-        #gallery-container {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 35px;
+        /* TARJETA CENTRAL / CATEGORÍAS */
+        .gallery-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px;
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 15px;
+            transform-origin: center;
         }
 
-        #gallery-container h2 {
+        @media (min-width: 768px) {
+            .gallery-card {
+                transform: scale(1.25);
+            }
+        }
+
+        h2 {
             text-align: center;
-            margin-bottom: 5px;
-            color: #1a1a1a;
-            font-size: 18px;
+            color: #1e293b;
+            font-size: 16px;
             letter-spacing: 1px;
+            margin-bottom: 5px;
         }
 
-        .group-btn {
+        .category-btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, #ff69b4, #00bfff);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             font-weight: bold;
             letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
             transition: all 0.3s ease;
+            text-align: center;
         }
 
-        .group-btn:hover {
+        .category-btn:hover {
             opacity: 0.95;
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
         }
 
-        /* Contenedor Inferior de Botones (Carrito y Salir) */
-        footer {
+        /* BARRA INFERIOR DE ACCESOS */
+        .footer-actions {
             width: 100%;
-            max-width: 400px;
             display: flex;
+            justify-content: center;
             gap: 15px;
+            margin-bottom: 10px;
         }
 
-        .footer-btn {
-            flex: 1;
-            padding: 12px;
+        .action-btn {
+            padding: 10px 25px;
             border: none;
             border-radius: 12px;
-            font-size: 14px;
-            cursor: pointer;
+            font-size: 13px;
             font-weight: bold;
+            cursor: pointer;
             letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
-        #btn-carrito {
-            background: linear-gradient(135deg, #00bfff, #1e90ff);
+        .btn-carrito {
+            background: #00bfff;
             color: white;
         }
 
-        #btn-salir {
-            background: linear-gradient(135deg, #ff4500, #dc143c);
+        .btn-carrito:hover {
+            background: #009acd;
+        }
+
+        .btn-salir {
+            background: #ef4444;
             color: white;
         }
 
-        .footer-btn:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
+        .btn-salir:hover {
+            background: #dc2626;
         }
     </style>
 </head>
 <body>
 
-    <!-- Cabecera con Logo y Código de Usuario -->
-    <header>
-        <img src="marisal--2026.png" alt="LOGO MARISAL">
-        <div id="user-badge">CÓDIGO: <span id="display-codigo">---</span></div>
-    </header>
-
-    <!-- Botones Centrales de Selección -->
-    <div id="gallery-container">
-        <h2>SELECCIONA UNA CATEGORÍA</h2>
-        <button class="group-btn" onclick="alert('Abriendo sección: CABEZA')">CABEZA</button>
-        <button class="group-btn" onclick="alert('Abriendo sección: CUERPO')">CUERPO</button>
-        <button class="group-btn" onclick="alert('Abriendo sección: ACCESORIOS')">ACCESORIOS</button>
+    <!-- PANTALLA DE CARGA 
+    <div id="loading-screen">
+        <img src="marisal--2026.png" alt="Logo" class="loading-logo">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="loading-text" id="loadingText">CARGANDO... 0%</div>
     </div>
 
-    <!-- Botones Inferiores -->
-    <footer>
-        <button class="footer-btn" id="btn-carrito" onclick="alert('Ir a CARRITO')">CARRITO</button>
-        <button class="footer-btn" id="btn-salir" onclick="window.location.href='index.html'">SALIR</button>
-    </footer>
+    <!-- HEADER SUPERIOR -->
+    <div class="header-top">
+        <div class="logo-header">
+            <img src="marisal--2026.png" alt="LOGO MARISAL">
+        </div>
+        <div class="codigo-badge" id="codigoDisplay">CÓDIGO: ---</div>
+    </div>
+
+    <!-- CONTENIDO CENTRAL -->
+    <div class="gallery-card">
+        <h2>SELECCIONA UNA CATEGORÍA</h2>
+        <button type="button" class="category-btn" onclick="irCategoria('cabeza')">CABEZA</button>
+        <button type="button" class="category-btn" onclick="irCategoria('cuerpo')">CUERPO</button>
+        <button type="button" class="category-btn" onclick="irCategoria('accesorios')">ACCESORIOS</button>
+    </div>
+
+    <!-- BOTONES INFERIORES -->
+    <div class="footer-actions">
+        <button type="button" class="action-btn btn-carrito" onclick="verCarrito()">CARRITO</button>
+        <button type="button" class="action-btn btn-salir" onclick="cerrarSesion()">SALIR</button>
+    </div>
 
     <script>
-        // Validar acceso estricto por código de cliente
-        const codigoCliente = localStorage.getItem("codigo_cliente");
+        let progress = 0;
+        const progressBar = document.getElementById("progressBar");
+        const loadingText = document.getElementById("loadingText");
+        const loadingScreen = document.getElementById("loading-screen");
 
-        if (!codigoCliente) {
-            alert("Acceso denegado. Debe iniciar sesión con un código válido.");
+        const interval = setInterval(() => {
+            progress += 2;
+            if (progress <= 100) {
+                progressBar.style.width = progress + "%";
+                loadingText.innerText = "CARGANDO... " + progress + "%";
+            } else {
+                clearInterval(interval);
+                loadingScreen.style.opacity = "0";
+                setTimeout(() => {
+                    loadingScreen.style.display = "none";
+                }, 500);
+            }
+        }, 20);
+
+        // Recuperar código del cliente guardado en sessionStorage o localStorage
+        window.addEventListener("DOMContentLoaded", () => {
+            const codigoGuardado = sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cliente") || "JM89";
+            document.getElementById("codigoDisplay").innerText = "CÓDIGO: " + codigoGuardado.toUpperCase();
+        });
+
+        function irCategoria(categoria) {
+            // Aquí puedes redirigir a la vista de productos de la categoría seleccionada
+            window.location.href = `${categoria}.html`;
+        }
+
+        function verCarrito() {
+            alert("VISTA DE CARRITO EN DESARROLLO.");
+        }
+
+        function cerrarSesion() {
+            sessionStorage.clear();
+            localStorage.clear();
             window.location.href = "index.html";
-        } else {
-            document.getElementById("display-codigo").innerText = codigoCliente;
         }
     </script>
 </body>
