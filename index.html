@@ -25,14 +25,14 @@
             overflow: hidden;
         }
 
-        /* PANTALLA DE CARGA CON FONDO AZUL OSCURO ELEGANTE */
+        /* PANTALLA DE CARGA CON FONDO BLANCO ELEGANTE Y LOGOTIPO GRANDE */
         #loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.96);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             display: flex;
@@ -44,20 +44,20 @@
         }
 
         .loading-logo {
-            width: 220px;
+            width: 320px;
             height: auto;
-            margin-bottom: 25px;
-            filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.5));
+            margin-bottom: 30px;
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.15));
         }
 
         .progress-bar-container {
-            width: 280px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
+            width: 340px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
             overflow: hidden;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 14px;
+            border: 1px solid #cbd5e1;
         }
 
         .progress-bar {
@@ -68,9 +68,9 @@
         }
 
         .loading-text {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
-            color: #cbd5e1;
+            color: #475569;
             letter-spacing: 1px;
         }
 
@@ -226,7 +226,7 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA CON FONDO AZUL OSCURO Y LOGOTIPO DESTACADO -->
+    <!-- PANTALLA DE CARGA CON FONDO BLANCO Y LOGOTIPO GRANDE -->
     <div id="loading-screen">
         <img src="marisal--2026.png" alt="Logo" class="loading-logo">
         <div class="progress-bar-container">
