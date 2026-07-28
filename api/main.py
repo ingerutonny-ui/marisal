@@ -1,7 +1,8 @@
+import os
+import psycopg2
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from api.models import crear_tablas
-from api.crud import registrar_cliente_db, verificar_cliente_db, realizar_compra_db
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -13,27 +14,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.on_event("startup")
-def startup_event():
-    crear_tablas()
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-@app.post("/api/registrar_cliente")
-def registrar_cliente(data: dict):
+def get_db_connection():
+    if not DATABASE_URL:
+        raise HTTPException(status_code=500, detail="DATABASE_URL no configurada")
     try:
-        return registrar_cliente_db(data)
+        conn = psycopg2.connect(DATABASE_URL, sslmode="require", connect_timeout=10)
+        return conn
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Error de conexión: {str(e)}")
 
-@app.get("/api/verificar_cliente/{codigo_cli}")
-def verificar_cliente(codigo_cli: str):
+@app.get("/api/verificar_cliente/{codigo}")
+def verificar_cliente(codigo: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        return verificar_cliente_db(codigo_cli)
+        cursor.execute(
+            "SELECT cliente_ms_codigo_cli, cliente_ms_nombre_cli, cliente_ms_num_cel_cli FROM cliente_ms WHERE cliente_ms_codigo_cli = %s",
+            (codigo.upper(),)
+        )
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="El código de cliente no existe en el sistema.")
+        return {
+            "codigo": row[0],
+            "nombre": row[1],
+            "celular": row[2]
+        }
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
-@app.post("/api/realizar_compra")
-def realizar_compra(data: dict):
-    try:
-        return realizar_compra_db(data)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
