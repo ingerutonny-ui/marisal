@@ -244,10 +244,10 @@
             <img src="marisal--2026.png" alt="LOGO MARISAL">
         </div>
 
-        <h2>ACCESO CLIENTES</h2>
+        <h2>ACCESO CASERITAS</h2>
 
         <div class="input-group">
-            <label for="codigo_cliente">TU CÓDIGO DE CLIENTE:</label>
+            <label for="codigo_cliente">TU CÓDIGO CASE:</label>
             <input type="text" id="codigo_cliente" placeholder="EJ: RP73" autocomplete="off">
         </div>
 
@@ -263,7 +263,7 @@
         <button type="button" class="submit-btn" onclick="verificarAcceso()">INGRESAR A GALERÍA</button>
 
         <div class="back-link">
-            ¿NO TIENES CÓDIGO? <a href="registro.html">REGÍSTRATE AQUÍ</a>
+            ¿NO TIENES CÓDIGO CASE? <a href="registro.html">REGÍSTRATE AQUÍ</a>
         </div>
     </div>
 
@@ -308,7 +308,7 @@
             const captchaIngresado = document.getElementById("inputCaptcha").value.trim().toUpperCase();
 
             if (!codigo) {
-                alert("POR FAVOR, INGRESA TU CÓDIGO DE CLIENTE.");
+                alert("POR FAVOR, INGRESA TU CÓDIGO DE CASE.");
                 return;
             }
 
