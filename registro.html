@@ -147,6 +147,87 @@
         .back-link a:hover {
             text-decoration: underline;
         }
+
+        /* Estilos para el Modal / Pantalla Emergente de Éxito */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+            animation: modalScale 0.3s ease-in-out;
+        }
+
+        @keyframes modalScale {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-card h3 {
+            color: #ffffff;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .codigo-destacado {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00ffff;
+            background: rgba(0, 191, 255, 0.15);
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 2px dashed #00bfff;
+            letter-spacing: 3px;
+            width: 100%;
+        }
+
+        .modal-card p {
+            color: #cbd5e1;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #00bfff, #ff69b4);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -177,6 +258,17 @@
 
         <div class="back-link">
             ¿YA TIENES CÓDIGO? <a href="index.html">INICIA SESIÓN AQUÍ</a>
+        </div>
+    </div>
+
+    <!-- MODAL / PANTALLA CENTRAL DE ÉXITO -->
+    <div class="modal-overlay" id="modalExito">
+        <div class="modal-card">
+            <h3>¡REGISTRO EXITOSO!</h3>
+            <p>TU CÓDIGO DE CLIENTE ASIGNADO ES:</p>
+            <div class="codigo-destacado" id="codigoModalDisplay">---</div>
+            <p>GUARDA TU CÓDIGO PARA PODER INGRESAR AL SISTEMA.</p>
+            <button type="button" class="modal-btn" onclick="irAlLogin()">INICIAR SESIÓN</button>
         </div>
     </div>
 
@@ -248,12 +340,17 @@
 
                 const data = await response.json();
 
-                alert(`¡REGISTRO EXITOSO! TU CÓDIGO ASIGNADO ES: ${codigo}`);
-                window.location.href = "index.html";
+                // Mostrar el modal central con el código generado
+                document.getElementById("codigoModalDisplay").innerText = data.codigo;
+                document.getElementById("modalExito").style.display = "flex";
 
             } catch (error) {
                 alert(error.message);
             }
+        }
+
+        function irAlLogin() {
+            window.location.href = "index.html";
         }
     </script>
 </body>
