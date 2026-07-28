@@ -154,9 +154,12 @@
     </footer>
 
     <script>
-        // Recuperar el código del cliente guardado en el registro anterior
-        const codigoGuardado = localStorage.getItem("codigo_cli") || "INVITADO";
-        document.getElementById("display-codigo").innerText = codigoGuardado;
+            // Recuperar el código ingresado en el login o asignarlo si viene vacío
+            let codigoCliente = localStorage.getItem("codigo_cliente");
+            if (!codigoCliente) {
+                codigoCliente = "RP73"; // O el código por defecto que corresponda
+            }
+            document.getElementById("etiqueta_codigo").innerText = "CÓDIGO: " + codigoCliente;
     </script>
 </body>
 </html>
