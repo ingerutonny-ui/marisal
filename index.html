@@ -25,7 +25,7 @@
             overflow: hidden;
         }
 
-        /* PANTALLA DE CARGA CON FONDO BLANCO ELEGANTE Y LOGOTIPO GRANDE */
+        /* PANTALLA DE CARGA CON FONDO BLANCO Y ADAPTABLE */
         #loading-screen {
             position: fixed;
             top: 0;
@@ -41,20 +41,24 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 0.5s ease;
+            padding: 20px;
         }
 
+        /* TAMAÑO ADAPTABLE: Pequeño en celulares, grande en PC */
         .loading-logo {
-            width: 580px;
+            width: 85%;
+            max-width: 550px; /* Tamaño grande para PC */
             height: auto;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.12));
         }
 
         .progress-bar-container {
-            width: 500px;
-            height: 10px;
+            width: 80%;
+            max-width: 450px; /* Tamaño grande para PC */
+            height: 12px;
             background: #e2e8f0;
-            border-radius: 5px;
+            border-radius: 6px;
             overflow: hidden;
             margin-bottom: 14px;
             border: 1px solid #cbd5e1;
@@ -93,7 +97,7 @@
         }
 
         /* ESCALA PROPORCIONAL SOLO PARA COMPUTADORAS */
-        @media (min-width: 1080px) {
+        @media (min-width: 768px) {
             .login-card {
                 transform: scale(1.35);
             }
@@ -226,7 +230,7 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA CON FONDO BLANCO Y LOGOTIPO GRANDE -->
+    <!-- PANTALLA DE CARGA -->
     <div id="loading-screen">
         <img src="marisal--2026.png" alt="Logo" class="loading-logo">
         <div class="progress-bar-container">
