@@ -22,6 +22,60 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden;
+        }
+
+        /* PANTALLA DE CARGA CON FONDO BLANCO Y ADAPTABLE */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        /* TAMAÑO ADAPTABLE: Pequeño en celulares, grande en PC */
+        .loading-logo {
+            width: 85%;
+            max-width: 550px;
+            height: auto;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.12));
+        }
+
+        .progress-bar-container {
+            width: 80%;
+            max-width: 450px;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff69b4, #00bfff);
+            transition: width 0.1s linear;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #475569;
+            letter-spacing: 1px;
         }
 
         .login-card {
@@ -38,6 +92,14 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
+            transform-origin: center;
+        }
+
+        /* ESCALA PROPORCIONAL SOLO PARA COMPUTADORAS */
+        @media (min-width: 768px) {
+            .login-card {
+                transform: scale(1.35);
+            }
         }
 
         .logo-container {
@@ -231,6 +293,15 @@
 </head>
 <body>
 
+    <!-- PANTALLA DE CARGA -->
+    <div id="loading-screen">
+        <img src="marisal--2026.png" alt="Logo" class="loading-logo">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="loading-text" id="loadingText">CARGANDO... 0%</div>
+    </div>
+
     <div class="login-card">
         <div class="logo-container">
             <img src="marisal--2026.png" alt="LOGO MARISAL">
@@ -271,6 +342,25 @@
     </div>
 
     <script>
+        let progress = 0;
+        const progressBar = document.getElementById("progressBar");
+        const loadingText = document.getElementById("loadingText");
+        const loadingScreen = document.getElementById("loading-screen");
+
+        const interval = setInterval(() => {
+            progress += 2;
+            if (progress <= 100) {
+                progressBar.style.width = progress + "%";
+                loadingText.innerText = "CARGANDO... " + progress + "%";
+            } else {
+                clearInterval(interval);
+                loadingScreen.style.opacity = "0";
+                setTimeout(() => {
+                    loadingScreen.style.display = "none";
+                }, 500);
+            }
+        }, 20);
+
         document.getElementById("nombre_cliente").addEventListener("input", function (e) {
             this.value = this.value.toUpperCase();
             actualizarCodigo();
@@ -288,10 +378,8 @@
             if (nombreCompleto) {
                 const palabras = nombreCompleto.split(/\s+/).filter(Boolean);
                 if (palabras.length >= 2) {
-                    // Primera letra del primer nombre y primera letra del primer apellido
                     iniciales = palabras[0].charAt(0) + palabras[1].charAt(0);
                 } else if (palabras.length === 1) {
-                    // Si solo escribió una palabra, toma las dos primeras letras
                     iniciales = palabras[0].substring(0, 2);
                 }
             }
