@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Clientes</title>
+    <title>Acceso Clientes - Marisal</title>
     <style>
         * {
             margin: 0;
@@ -13,15 +13,68 @@
         }
 
         body {
-            background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop');
+            background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
+        /* Pantalla de Carga de 0 a 100% con Logo */
+        #loader-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-logo {
+            font-size: 42px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
+        }
+
+        .progress-container {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            padding: 3px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 12px;
+            background: linear-gradient(to right, #ec407a, #00bcd4);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .progress-text {
+            color: #ffffff;
+            margin-top: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Tarjeta de Login Principal */
         .login-card {
             background: rgba(255, 255, 255, 0.95);
             padding: 40px 30px;
@@ -30,6 +83,7 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
+            display: none;
         }
 
         h2 {
@@ -141,7 +195,17 @@
 </head>
 <body>
 
-    <div class="login-card">
+    <!-- Pantalla de Carga -->
+    <div id="loader-screen">
+        <div class="loader-logo">MARISAL</div>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div id="progress-text" class="progress-text">0%</div>
+    </div>
+
+    <!-- Tarjeta de Acceso -->
+    <div class="login-card" id="login-card">
         <h2>ACCESO CLIENTES</h2>
         
         <div class="form-group">
@@ -168,6 +232,30 @@
     <script>
         const API_URL = "https://marisal.onrender.com";
         let codigoCaptchaActual = "448Y";
+
+        // Animación de la barra de carga de 0 a 100%
+        function iniciarCarga() {
+            let width = 0;
+            const bar = document.getElementById("progress-bar");
+            const text = document.getElementById("progress-text");
+            const loader = document.getElementById("loader-screen");
+            const card = document.getElementById("login-card");
+
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    loader.style.opacity = "0";
+                    setTimeout(() => {
+                        loader.style.display = "none";
+                        card.style.display = "block";
+                    }, 500);
+                } else {
+                    width++;
+                    bar.style.width = width + "%";
+                    text.innerText = width + "%";
+                }
+            }, 20);
+        }
 
         function generarCaptcha() {
             const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -204,7 +292,6 @@
 
                 if (response.ok) {
                     alert("Acceso exitoso.");
-                    // Aquí puedes redirigir a tu galería principal directamente
                 } else {
                     alert(data.detail || "El código de cliente no existe en el sistema.");
                 }
@@ -215,6 +302,7 @@
         }
 
         window.onload = function() {
+            iniciarCarga();
             generarCaptcha();
         };
     </script>
