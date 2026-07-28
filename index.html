@@ -22,54 +22,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-        }
-
-        /* Pantalla de carga inicial (Splash Screen) */
-        #loader-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        #loader-screen img {
-            width: 240px;
-            height: auto;
-        }
-
-        .loader-bar-container {
-            width: 280px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            height: 10px;
             overflow: hidden;
-            border: 1px solid #ccc;
-        }
-
-        .loader-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(135deg, #ff69b4, #00bfff);
-            border-radius: 10px;
-            transition: width 3s linear;
-        }
-
-        #loader-text {
-            font-size: 14px;
-            font-weight: bold;
-            color: #555;
-            letter-spacing: 1px;
         }
 
         .login-card {
@@ -81,38 +34,18 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             width: 100%;
-            max-width: 400px; /* Tamaño intacto para celulares */
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
+            transform-origin: center;
         }
 
-        /* TAMAÑO ADAPTABLE SOLO PARA COMPUTADORAS Y PANTALLAS GRANDES */
+        /* ESCALA PROPORCIONAL SOLO PARA COMPUTADORAS (Mantiene el diseño intacto pero más grande) */
         @media (min-width: 768px) {
             .login-card {
-                max-width: 560px; /* Tarjeta más ancha en PC */
-                padding: 40px 50px; /* Mayor espacio interno */
-                gap: 18px;
-            }
-            .logo-container img {
-                width: 230px; /* Logo más visible en PC */
-            }
-            h2 {
-                font-size: 21px;
-            }
-            label {
-                font-size: 13px;
-            }
-            input {
-                padding: 14px 18px;
-                font-size: 15px;
-                border-radius: 14px;
-            }
-            .submit-btn {
-                padding: 15px;
-                font-size: 15px;
-                border-radius: 14px;
+                transform: scale(1.35);
             }
         }
 
@@ -124,86 +57,86 @@
         }
 
         .logo-container img {
-            width: 200px;
+            width: 180px;
             height: auto;
         }
 
         h2 {
             text-align: center;
-            color: #1a1a1a;
-            font-size: 18px;
+            color: #ffffff;
+            font-size: 17px;
             letter-spacing: 1px;
-            margin-bottom: 0px;
+            margin-bottom: -2px;
         }
 
         .input-group {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
         label {
             font-size: 11px;
             font-weight: bold;
-            color: #555;
+            color: #cbd5e1;
             letter-spacing: 1px;
         }
 
         input {
             width: 100%;
-            padding: 11px 15px;
-            border: 1px solid #ccc;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
             transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         input:focus {
             border-color: #00bfff;
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
-        }
-
-        #codigo_cli {
-            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .captcha-box {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #eef2f3;
-            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            border: 1px solid #ddd;
-        }
-
-        #captcha-text {
-            font-size: 18px;
+            padding: 8px 14px;
+            justify-content: space-between;
+            align-items: center;
             font-weight: bold;
-            letter-spacing: 4px;
-            color: #ff1493;
-            user-select: none;
+            letter-spacing: 3px;
+            color: #ff69b4;
+            font-size: 16px;
+            width: 100%;
         }
 
         .refresh-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            color: #555;
-            transition: transform 0.2s;
+            color: #cbd5e1;
+            font-size: 14px;
+            transition: transform 0.3s ease;
         }
 
         .refresh-btn:hover {
-            transform: scale(1.1);
+            transform: rotate(180deg);
+            color: #ffffff;
         }
 
         .submit-btn {
             width: 100%;
-            padding: 13px;
+            padding: 12px;
             background: linear-gradient(135deg, #ff69b4, #00bfff);
             color: white;
             border: none;
@@ -223,34 +156,25 @@
             box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
         }
 
-        .register-link {
+        .back-link {
             text-align: center;
             font-size: 11px;
-            color: #666;
+            color: #94a3b8;
             margin-top: -2px;
         }
 
-        .register-link a {
-            color: #ff1493;
+        .back-link a {
+            color: #ff69b4;
             text-decoration: none;
             font-weight: bold;
         }
 
-        .register-link a:hover {
+        .back-link a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-
-    <!-- Pantalla de Carga Independiente (Splash Screen) -->
-    <div id="loader-screen">
-        <img src="marisal--2026.png" alt="LOGO MARISAL">
-        <div class="loader-bar-container">
-            <div class="loader-bar" id="loaderBar"></div>
-        </div>
-        <div id="loader-text">CARGANDO... 0%</div>
-    </div>
 
     <div class="login-card">
         <div class="logo-container">
@@ -260,109 +184,77 @@
         <h2>ACCESO CLIENTES</h2>
 
         <div class="input-group">
-            <label for="codigo_cli">TU CÓDIGO DE CLIENTE:</label>
-            <input type="text" id="codigo_cli" placeholder="EJ: RP73" autocomplete="off">
+            <label for="codigo_cliente">TU CÓDIGO DE CLIENTE:</label>
+            <input type="text" id="codigo_cliente" placeholder="EJ: JM89" autocomplete="off">
         </div>
 
         <div class="input-group">
             <label>VERIFICACIÓN CAPTCHA:</label>
             <div class="captcha-box">
-                <span id="captcha-text"></span>
+                <span id="captchaText">N Q I V</span>
                 <button type="button" class="refresh-btn" onclick="generarCaptcha()">🔄</button>
             </div>
-            <input type="text" id="captcha-input" placeholder="INGRESA EL CAPTCHA" autocomplete="off">
+            <input type="text" id="inputCaptcha" placeholder="INGRESA EL CAPTCHA" autocomplete="off">
         </div>
 
         <button type="button" class="submit-btn" onclick="verificarAcceso()">INGRESAR A GALERÍA</button>
 
-        <div class="register-link">
+        <div class="back-link">
             ¿NO TIENES CÓDIGO? <a href="registro.html">REGÍSTRATE AQUÍ</a>
         </div>
     </div>
 
     <script>
-        let codigoCaptchaActual = "";
-
-        // Animación de la barra de carga independiente de 0 a 100% en 3 segundos
-        window.addEventListener("DOMContentLoaded", () => {
-            const loaderBar = document.getElementById("loaderBar");
-            const loaderText = document.getElementById("loader-text");
-            const loaderScreen = document.getElementById("loader-screen");
-
-            setTimeout(() => {
-                loaderBar.style.width = "100%";
-            }, 100);
-
-            // Contador de porcentaje sincronizado a 3 segundos
-            let progreso = 0;
-            const intervalo = setInterval(() => {
-                progreso += 1;
-                if (progreso <= 100) {
-                    loaderText.innerText = `CARGANDO... ${progreso}%`;
-                }
-            }, 30);
-
-            // Ocultar pantalla de carga al terminar los 3 segundos exactos
-            setTimeout(() => {
-                clearInterval(intervalo);
-                loaderScreen.style.opacity = "0";
-                setTimeout(() => {
-                    loaderScreen.style.display = "none";
-                }, 500);
-            }, 3100);
-
-            generarCaptcha();
-        });
-
-        document.getElementById("codigo_cli").addEventListener("input", function (e) {
-            this.value = this.value.toUpperCase();
-        });
+        let textoCaptchaActual = "";
 
         function generarCaptcha() {
-            const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             let captcha = "";
             for (let i = 0; i < 4; i++) {
-                captcha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            codigoCaptchaActual = captcha;
-            document.getElementById("captcha-text").innerText = captcha;
+            textoCaptchaActual = captcha;
+            document.getElementById("captchaText").innerText = captcha.split("").join(" ");
         }
 
-        async function verificarAcceso() {
-            const codigoInput = document.getElementById("codigo_cli").value.trim();
-            const captchaInput = document.getElementById("captcha-input").value.trim().toUpperCase();
+        window.onload = function() {
+            generarCaptcha();
+        };
 
-            if (!codigoInput) {
-                alert("Por favor, ingresa tu código de cliente.");
+        async function verificarAcceso() {
+            const codigo = document.getElementById("codigo_cliente").value.trim().toUpperCase();
+            const captchaIngresado = document.getElementById("inputCaptcha").value.trim().toUpperCase();
+
+            if (!codigo) {
+                alert("POR FAVOR, INGRESA TU CÓDIGO DE CLIENTE.");
                 return;
             }
 
-            if (captchaInput !== codigoCaptchaActual) {
-                alert("El código captcha ingresado es incorrecto.");
+            if (captchaIngresado !== textoCaptchaActual) {
+                alert("EL CAPTCHA ES INCORRECTO. INTÉNTALO NUEVAMENTE.");
                 generarCaptcha();
-                document.getElementById("captcha-input").value = "";
+                document.getElementById("inputCaptcha").value = "";
                 return;
             }
 
             try {
-                const response = await fetch(`https://marisal.onrender.com/api/verificar_cliente/${codigoInput}`);
+                const response = await fetch(`https://marisal.onrender.com/api/verificar_cliente/${codigo}`);
                 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || "El código de cliente no existe en el sistema.");
+                    throw new Error(errorData.detail || "EL CÓDIGO NO EXISTE EN EL SISTEMA.");
                 }
 
                 const data = await response.json();
-
-                localStorage.setItem("codigo_cliente", data.codigo);
-                localStorage.setItem("nombre_cliente", data.nombre);
-
+                
+                // Guardar sesión y redirigir a galería
+                localStorage.setItem("cliente_actual", JSON.stringify(data));
                 window.location.href = "galeria.html";
 
             } catch (error) {
                 alert(error.message);
                 generarCaptcha();
-                document.getElementById("captcha-input").value = "";
+                document.getElementById("inputCaptcha").value = "";
             }
         }
     </script>
