@@ -49,3 +49,39 @@ def verificar_cliente(codigo: str):
     finally:
         cursor.close()
         conn.close()
+
+@app.post("/api/registrar_cliente")
+def registrar_cliente(data: dict):
+    codigo = data.get("codigo_cli")
+    nombre = data.get("nombre_cli")
+    celular = data.get("num_cel_cli")
+
+    if not codigo or not nombre or not celular:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios para el registro.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Verificar si el código ya existe
+        cursor.execute("SELECT codigo_cli FROM cliente_ms WHERE codigo_cli = %s", (codigo.upper(),))
+        if cursor.fetchone():
+            raise HTTPException(status_code=400, detail="El código de cliente ya se encuentra registrado.")
+
+        # Insertar nuevo cliente
+        cursor.execute(
+            "INSERT INTO cliente_ms (codigo_cli, nombre_cli, num_cel_cli) VALUES (%s, %s, %s)",
+            (codigo.upper(), nombre.upper(), celular.upper())
+        )
+        conn.commit()
+        return {
+            "mensaje": "Cliente registrado exitosamente",
+            "codigo": codigo.upper()
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
