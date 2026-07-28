@@ -100,6 +100,16 @@
             text-transform: uppercase;
         }
 
+        /* Estilo especial para el campo de código autogenerado */
+        #codigo_generado {
+            background: rgba(0, 191, 255, 0.2);
+            border-color: #00bfff;
+            color: #00ffff;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 12px;
@@ -151,12 +161,17 @@
 
         <div class="input-group">
             <label for="nombre_cliente">NOMBRE COMPLETO:</label>
-            <input type="text" id="nombre_cliente" placeholder="EJ: JUAN PÉREZ" autocomplete="off">
+            <input type="text" id="nombre_cliente" placeholder="EJ: JUAN PÉREZ" autocomplete="off" oninput="actualizarCodigo()">
         </div>
 
         <div class="input-group">
             <label for="celular_cliente">CELULAR:</label>
-            <input type="text" id="celular_cliente" placeholder="EJ: 70000000" autocomplete="off">
+            <input type="text" id="celular_cliente" placeholder="EJ: 70000000" autocomplete="off" oninput="actualizarCodigo()">
+        </div>
+
+        <div class="input-group">
+            <label for="codigo_generado">TU CÓDIGO GENERADO:</label>
+            <input type="text" id="codigo_generado" readonly placeholder="SE GENERARÁ AUTOMÁTICAMENTE">
         </div>
 
         <button type="button" class="submit-btn" onclick="registrarCliente()">REGISTRARSE</button>
@@ -169,14 +184,46 @@
     <script>
         document.getElementById("nombre_cliente").addEventListener("input", function (e) {
             this.value = this.value.toUpperCase();
+            actualizarCodigo();
         });
         document.getElementById("celular_cliente").addEventListener("input", function (e) {
             this.value = this.value.toUpperCase();
+            actualizarCodigo();
         });
+
+        function actualizarCodigo() {
+            const nombre = document.getElementById("nombre_cliente").value.trim();
+            const celular = document.getElementById("celular_cliente").value.trim();
+            
+            let letrasNombre = "";
+            if (nombre) {
+                // Tomar las primeras letras o iniciales (por ejemplo, primeras 2 o 3 letras de la primera palabra o de todo)
+                const palabras = nombre.split(" ");
+                if (palabras.length > 0 && palabras[0].length >= 2) {
+                    letrasNombre = palabras[0].substring(0, 3);
+                } else {
+                    letrasNombre = nombre.substring(0, 3);
+                }
+            }
+
+            let ultimosCel = "";
+            if (celular.length >= 2) {
+                ultimosCel = celular.slice(-2);
+            } else if (celular.length > 0) {
+                ultimosCel = celular;
+            }
+
+            if (letrasNombre || ultimosCel) {
+                document.getElementById("codigo_generado").value = (letrasNombre + ultimosCel).toUpperCase();
+            } else {
+                document.getElementById("codigo_generado").value = "";
+            }
+        }
 
         async function registrarCliente() {
             const nombre = document.getElementById("nombre_cliente").value.trim();
             const celular = document.getElementById("celular_cliente").value.trim();
+            const codigo = document.getElementById("codigo_generado").value.trim();
 
             if (!nombre || !celular) {
                 alert("Por favor, completa todos los campos.");
@@ -191,7 +238,8 @@
                     },
                     body: JSON.stringify({
                         nombre: nombre,
-                        celular: celular
+                        celular: celular,
+                        codigo: codigo
                     })
                 });
 
