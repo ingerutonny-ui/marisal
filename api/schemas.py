@@ -1,18 +1,18 @@
 from pydantic import BaseModel
-from typing import List
+from typing import Optional, List
 
-class ClienteSchema(BaseModel):
+class ClienteCreate(BaseModel):
     codigo_cli: str
     nombre_cli: str
     num_cel_cli: str
 
-class ProductoItem(BaseModel):
+class VentaItem(BaseModel):
     codigo_pro: str
     cantidad_ven: int
     total_ven: float
 
-class CompraSchema(BaseModel):
+class CompraCreate(BaseModel):
     codigo_cli: str
-    lugar_ven: str
+    lugar_ven: Optional[str] = "WEB"
     total_his: float
-    productos: List[ProductoItem]
+    items: List[VentaItem]
