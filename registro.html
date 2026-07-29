@@ -428,6 +428,10 @@
 
                 const data = await response.json();
 
+                // Guardar el código en localStorage y sessionStorage para que la galería lo lea
+                localStorage.setItem("codigo_cliente", data.codigo);
+                sessionStorage.setItem("codigo_cliente", data.codigo);
+
                 document.getElementById("codigoModalDisplay").innerText = data.codigo;
                 document.getElementById("modalExito").style.display = "flex";
 
