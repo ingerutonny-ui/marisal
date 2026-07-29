@@ -311,12 +311,12 @@
 
         <div class="input-group">
             <label for="nombre_cliente">NOMBRE COMPLETO:</label>
-            <input type="text" id="nombre_cliente" placeholder="EJ: ELENA SUXO" autocomplete="off">
+            <input type="text" id="nombre_cliente" placeholder="EJ: SUSANA ALINAS" autocomplete="off">
         </div>
 
         <div class="input-group">
             <label for="celular_cliente">CELULAR:</label>
-            <input type="text" id="celular_cliente" placeholder="EJ: 70000000" autocomplete="off">
+            <input type="text" id="celular_cliente" placeholder="EJ: 12345678" maxlength="9" autocomplete="off">
         </div>
 
         <div class="input-group">
@@ -366,7 +366,7 @@
             actualizarCodigo();
         });
         document.getElementById("celular_cliente").addEventListener("input", function (e) {
-            this.value = this.value.toUpperCase();
+            this.value = this.value.replace(/\D/g, "").slice(0, 9);
             actualizarCodigo();
         });
 
