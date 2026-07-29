@@ -14,6 +14,9 @@ class Producto(Base):
     codigo_pro = Column(String(50), primary_key=True, index=True)
     nombre_pro = Column(String(100))
     precio_pro = Column(Numeric(10, 2))
+    imagen_pro = Column(String(255))  # <-- Campo nuevo para la ruta/nombre de la imagen
+    color_pro = Column(String(100))
+    cantidad_pro = Column(Integer)
 
 class Historial(Base):
     __tablename__ = "historial_ms"
