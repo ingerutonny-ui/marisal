@@ -103,7 +103,10 @@ def registrar_producto(data: dict):
             raise HTTPException(status_code=400, detail="El código de producto ya se encuentra registrado.")
 
         cursor.execute(
-            "INSERT INTO producto_ms (codigo_pro, nombre_pro, precio_pro, imagen_pro, color_pro, cantidad_pro) VALUES (%s, %s, %s, %s, %s, %s)",
+            """
+            INSERT INTO producto_ms (codigo_pro, nombre_pro, precio_pro, imagen_pro, color_pro, cantidad_pro) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
             (codigo.upper(), nombre.upper(), precio, imagen, color.upper(), cantidad)
         )
         conn.commit()
