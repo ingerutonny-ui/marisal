@@ -82,3 +82,40 @@ def registrar_cliente(data: dict):
     finally:
         cursor.close()
         conn.close()
+
+@app.post("/api/registrar_producto")
+def registrar_producto(data: dict):
+    codigo = data.get("codigo_pro")
+    nombre = data.get("nombre_pro")
+    precio = data.get("precio_pro")
+    imagen = data.get("imagen_pro")
+    color = data.get("color_pro")
+    cantidad = data.get("cantidad_pro")
+
+    if not codigo or not nombre or precio is None or not imagen or not color or cantidad is None:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios para el registro del producto.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT codigo_pro FROM producto_ms WHERE codigo_pro = %s", (codigo.upper(),))
+        if cursor.fetchone():
+            raise HTTPException(status_code=400, detail="El código de producto ya se encuentra registrado.")
+
+        cursor.execute(
+            "INSERT INTO producto_ms (codigo_pro, nombre_pro, precio_pro, imagen_pro, color_pro, cantidad_pro) VALUES (%s, %s, %s, %s, %s, %s)",
+            (codigo.upper(), nombre.upper(), precio, imagen, color.upper(), cantidad)
+        )
+        conn.commit()
+        return {
+            "mensaje": "Producto registrado exitosamente",
+            "codigo": codigo.upper()
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
