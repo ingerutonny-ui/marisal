@@ -122,3 +122,46 @@ def registrar_producto(data: dict):
     finally:
         cursor.close()
         conn.close()
+
+@app.get("/api/listar_productos")
+def listar_productos():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT codigo_pro, nombre_pro, precio_pro, imagen_pro, color_pro, cantidad_pro FROM producto_ms")
+        rows = cursor.fetchall()
+        productos = []
+        for row in rows:
+            productos.append({
+                "codigo_pro": row[0],
+                "nombre_pro": row[1],
+                "precio_pro": float(row[2]) if row[2] is not None else 0.0,
+                "imagen_pro": row[3],
+                "color_pro": row[4],
+                "cantidad_pro": row[5]
+            })
+        return productos
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.delete("/api/eliminar_producto/{codigo}")
+def eliminar_producto(codigo: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM producto_ms WHERE codigo_pro = %s", (codigo.upper(),))
+        conn.commit()
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Producto no encontrado")
+        return {"mensaje": "Producto eliminado exitosamente"}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
