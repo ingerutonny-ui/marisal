@@ -98,7 +98,8 @@ def registrar_producto(data: dict):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT codigo_pro FROM producto_ms WHERE codigo_pro = %s", (codigo.upper(),))
+        # Forzar la consulta especificando la columna exacta por su nombre
+        cursor.execute("SELECT codigo_pro FROM producto_ms WHERE codigo_pro = %s", (str(codigo).upper(),))
         if cursor.fetchone():
             raise HTTPException(status_code=400, detail="El código de producto ya se encuentra registrado.")
 
@@ -107,12 +108,12 @@ def registrar_producto(data: dict):
             INSERT INTO producto_ms (codigo_pro, nombre_pro, precio_pro, imagen_pro, color_pro, cantidad_pro) 
             VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (codigo.upper(), nombre.upper(), precio, imagen, color.upper(), cantidad)
+            (str(codigo).upper(), str(nombre).upper(), float(precio), str(imagen), str(color).upper(), int(cantidad))
         )
         conn.commit()
         return {
             "mensaje": "Producto registrado exitosamente",
-            "codigo": codigo.upper()
+            "codigo": str(codigo).upper()
         }
     except HTTPException as he:
         raise he
