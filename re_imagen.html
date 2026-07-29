@@ -31,7 +31,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        /* En pantallas de PC (escritorio), la tarjeta ocupa más espacio y presencia */
         @media (min-width: 768px) {
             .container {
                 max-width: 650px;
@@ -120,13 +119,13 @@
     <h2>Registrar Producto</h2>
     <form id="productForm">
         
-        <!-- 1. CÓDIGO DE PRODUCTO (Automático) -->
+        <!-- 1. CÓDIGO DE PRODUCTO (Automático con CA, CU, AC) -->
         <div class="form-group">
             <label for="codigo_pro">Código de Producto (Automático):</label>
             <input type="text" id="codigo_pro" readonly placeholder="Se genera solo...">
         </div>
 
-        <!-- 2. SELECCIÓN DE IMAGEN (Lista desplegable ordenada) -->
+        <!-- 2. SELECCIÓN DE IMAGEN -->
         <div class="form-group">
             <label for="imagen_select">Seleccionar Imagen:</label>
             <select id="imagen_select" required>
@@ -203,20 +202,31 @@
 </div>
 
 <script>
-    // Generar el código automáticamente basado en las primeras letras del nombre y la cantidad
+    // Generación automática del código con prefijo CA, CU o AC según la imagen seleccionada
     function generarCodigo() {
+        const imagenVal = document.getElementById('imagen_select').value;
         const nombre = document.getElementById('nombre_pro').value.trim();
         const cantidad = document.getElementById('cantidad_pro').value.trim();
         
+        let tipoPrefijo = 'PR'; // Por defecto si no selecciona imagen
+        if (imagenVal.includes('cabeza')) {
+            tipoPrefijo = 'CA';
+        } else if (imagenVal.includes('cuerpo')) {
+            tipoPrefijo = 'CU';
+        } else if (imagenVal.includes('accesorio')) {
+            tipoPrefijo = 'AC';
+        }
+
         if (nombre.length > 0) {
-            const prefijo = nombre.substring(0, 3).toUpperCase().replace(/\s+/g, '');
-            const sufijo = cantidad.length > 0 ? cantidad : '0';
-            document.getElementById('codigo_pro').value = `${prefijo}-${sufijo}`;
+            const letrasNombre = nombre.substring(0, 3).toUpperCase().replace(/\s+/g, '');
+            const sufijoCantidad = cantidad.length > 0 ? cantidad : '0';
+            document.getElementById('codigo_pro').value = `${tipoPrefijo}-${letrasNombre}-${sufijoCantidad}`;
         } else {
             document.getElementById('codigo_pro').value = '';
         }
     }
 
+    document.getElementById('imagen_select').addEventListener('change', generarCodigo);
     document.getElementById('nombre_pro').addEventListener('input', generarCodigo);
     document.getElementById('cantidad_pro').addEventListener('input', generarCodigo);
 
@@ -237,7 +247,10 @@
         mensajeDiv.textContent = 'Registrando producto...';
 
         try {
-            const response = await fetch('/api/registrar_producto', {
+            // CAMBIA ESTA URL POR LA DE TU BACKEND EN RENDER CUANDO ESTÉ LISTO (ej: https://tu-app.onrender.com/api/registrar_producto)
+            const URL_BACKEND = 'https://marisal.onrender.com/api/registrar_producto';
+
+            const response = await fetch(URL_BACKEND, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -258,7 +271,7 @@
             }
         } catch (error) {
             mensajeDiv.style.color = '#ef4444';
-            mensajeDiv.textContent = 'Error de conexión con el servidor.';
+            mensajeDiv.textContent = 'Error de conexión con el servidor en la nube.';
             console.error('Error:', error);
         }
     });
