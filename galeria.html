@@ -253,7 +253,8 @@
 
         // Recuperar código del cliente guardado en sessionStorage o localStorage
         window.addEventListener("DOMContentLoaded", () => {
-            const codigoGuardado = sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cliente") || "JM89";
+            const clienteGuardado = JSON.parse(localStorage.getItem("cliente_actual") || "{}");
+            const codigoGuardado = clienteGuardado.codigo || sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cliente") || "JM89";
             document.getElementById("codigoDisplay").innerText = "CÓDIGO: " + codigoGuardado.toUpperCase();
         });
 
