@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Productos - Galería</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input.uppercase {
+            text-transform: uppercase;
+        }
+        button {
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #mensaje {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Registrar Producto</h2>
+    <form id="productForm">
+        <div class="form-group">
+            <label for="codigo_pro">Código de Producto:</label>
+            <input type="text" id="codigo_pro" class="uppercase" required placeholder="Ej: PROD-01">
+        </div>
+        <div class="form-group">
+            <label for="nombre_pro">Nombre del Producto:</label>
+            <input type="text" id="nombre_pro" required placeholder="Ej: Sombrero elegante">
+        </div>
+        <div class="form-group">
+            <label for="precio_pro">Precio:</label>
+            <input type="number" step="0.01" id="precio_pro" required placeholder="0.00">
+        </div>
+        <div class="form-group">
+            <label for="imagen_pro">Ruta de Imagen (Galería):</label>
+            <input type="text" id="imagen_pro" required placeholder="Ej: galeria/sombrero_1.jpg">
+        </div>
+        <div class="form-group">
+            <label for="color_pro">Color:</label>
+            <input type="text" id="color_pro" required placeholder="Ej: Rojo">
+        </div>
+        <div class="form-group">
+            <label for="cantidad_pro">Cantidad:</label>
+            <input type="number" id="cantidad_pro" required placeholder="10">
+        </div>
+        <button type="submit">Guardar Producto</button>
+    </form>
+    <div id="mensaje"></div>
+</div>
+
+<script>
+    // Forzar mayúsculas automáticamente en el campo de código
+    const codigoInput = document.getElementById('codigo_pro');
+    codigoInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    document.getElementById('productForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const data = {
+            codigo_pro: document.getElementById('codigo_pro').value,
+            nombre_pro: document.getElementById('nombre_pro').value,
+            precio_pro: parseFloat(document.getElementById('precio_pro').value),
+            imagen_pro: document.getElementById('imagen_pro').value,
+            color_pro: document.getElementById('color_pro').value,
+            cantidad_pro: parseInt(document.getElementById('cantidad_pro').value)
+        };
+
+        const mensajeDiv = document.getElementById('mensaje');
+        mensajeDiv.style.color = '#333';
+        mensajeDiv.textContent = 'Registrando...';
+
+        try {
+            const response = await fetch('/api/registrar_producto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                mensajeDiv.style.color = 'green';
+                mensajeDiv.textContent = result.mensaje;
+                document.getElementById('productForm').reset();
+            } else {
+                mensajeDiv.style.color = 'red';
+                mensajeDiv.textContent = result.detail || 'Ocurrió un error al registrar.';
+            }
+        } catch (error) {
+            mensajeDiv.style.color = 'red';
+            mensajeDiv.textContent = 'Error de conexión con el servidor.';
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+</body>
+</html>
