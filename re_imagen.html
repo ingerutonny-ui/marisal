@@ -3,62 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Productos - Galería</title>
+    <title>MARISAL - REGISTRO DE PRODUCTOS</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 500px;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin: auto;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        * {
             box-sizing: border-box;
-        }
-        input.uppercase {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-transform: uppercase;
         }
+
+        body {
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* En pantallas de PC (escritorio), la tarjeta ocupa más espacio y presencia */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 650px;
+                padding: 45px;
+            }
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #475569;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #f8fafc;
+            color: #1e293b;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #ff69b4;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.15);
+        }
+
+        input[readonly] {
+            background: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
         button {
             width: 100%;
-            background-color: #007BFF;
+            background: linear-gradient(135deg, #ff69b4, #00bfff);
             color: white;
-            padding: 10px;
+            padding: 14px;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
+
         button:hover {
-            background-color: #0056b3;
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
         }
+
         #mensaje {
-            margin-top: 15px;
+            margin-top: 20px;
             text-align: center;
             font-weight: bold;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -67,30 +119,84 @@
 <div class="container">
     <h2>Registrar Producto</h2>
     <form id="productForm">
+        
+        <!-- 1. CÓDIGO DE PRODUCTO (Automático) -->
         <div class="form-group">
             <label for="codigo_pro">Código de Producto (Automático):</label>
-            <input type="text" id="codigo_pro" class="uppercase" readonly placeholder="Se genera solo...">
+            <input type="text" id="codigo_pro" readonly placeholder="Se genera solo...">
         </div>
+
+        <!-- 2. SELECCIÓN DE IMAGEN (Lista desplegable ordenada) -->
+        <div class="form-group">
+            <label for="imagen_select">Seleccionar Imagen:</label>
+            <select id="imagen_select" required>
+                <option value="">-- SELECCIONE UNA IMAGEN --</option>
+                
+                <optgroup label="CABEZA">
+                    <option value="galeria/cabeza_1.jpg">Cabeza 1</option>
+                    <option value="galeria/cabeza_2.jpg">Cabeza 2</option>
+                    <option value="galeria/cabeza_3.jpg">Cabeza 3</option>
+                    <option value="galeria/cabeza_4.jpg">Cabeza 4</option>
+                    <option value="galeria/cabeza_5.jpg">Cabeza 5</option>
+                    <option value="galeria/cabeza_6.jpg">Cabeza 6</option>
+                    <option value="galeria/cabeza_7.jpg">Cabeza 7</option>
+                    <option value="galeria/cabeza_8.jpg">Cabeza 8</option>
+                    <option value="galeria/cabeza_9.jpg">Cabeza 9</option>
+                    <option value="galeria/cabeza_10.jpg">Cabeza 10</option>
+                </optgroup>
+
+                <optgroup label="CUERPO">
+                    <option value="galeria/cuerpo_1.jpg">Cuerpo 1</option>
+                    <option value="galeria/cuerpo_2.jpg">Cuerpo 2</option>
+                    <option value="galeria/cuerpo_3.jpg">Cuerpo 3</option>
+                    <option value="galeria/cuerpo_4.jpg">Cuerpo 4</option>
+                    <option value="galeria/cuerpo_5.jpg">Cuerpo 5</option>
+                    <option value="galeria/cuerpo_6.jpg">Cuerpo 6</option>
+                    <option value="galeria/cuerpo_7.jpg">Cuerpo 7</option>
+                    <option value="galeria/cuerpo_8.jpg">Cuerpo 8</option>
+                    <option value="galeria/cuerpo_9.jpg">Cuerpo 9</option>
+                    <option value="galeria/cuerpo_10.jpg">Cuerpo 10</option>
+                </optgroup>
+
+                <optgroup label="ACCESORIOS">
+                    <option value="galeria/accesorio_1.jpg">Accesorio 1</option>
+                    <option value="galeria/accesorio_2.jpg">Accesorio 2</option>
+                    <option value="galeria/accesorio_3.jpg">Accesorio 3</option>
+                    <option value="galeria/accesorio_4.jpg">Accesorio 4</option>
+                    <option value="galeria/accesorio_5.jpg">Accesorio 5</option>
+                    <option value="galeria/accesorio_6.jpg">Accesorio 6</option>
+                    <option value="galeria/accesorio_7.jpg">Accesorio 7</option>
+                    <option value="galeria/accesorio_8.jpg">Accesorio 8</option>
+                    <option value="galeria/accesorio_9.jpg">Accesorio 9</option>
+                    <option value="galeria/accesorio_10.jpg">Accesorio 10</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <!-- 3. NOMBRE DEL PRODUCTO -->
         <div class="form-group">
             <label for="nombre_pro">Nombre del Producto:</label>
-            <input type="text" id="nombre_pro" class="uppercase" required placeholder="Ej: Sombrero elegante">
+            <input type="text" id="nombre_pro" required placeholder="Ej: Sombrero elegante">
         </div>
+
+        <!-- 4. PRECIO -->
         <div class="form-group">
             <label for="precio_pro">Precio:</label>
             <input type="number" step="0.01" id="precio_pro" required placeholder="0.00">
         </div>
-        <div class="form-group">
-            <label for="imagen_file">Subir Imagen:</label>
-            <input type="file" id="imagen_file" accept="image/*" required>
-        </div>
+
+        <!-- 5. COLOR -->
         <div class="form-group">
             <label for="color_pro">Color:</label>
-            <input type="text" id="color_pro" class="uppercase" required placeholder="Ej: Rojo">
+            <input type="text" id="color_pro" required placeholder="Ej: Azul, Verde, Negro">
         </div>
+
+        <!-- 6. CANTIDAD -->
         <div class="form-group">
             <label for="cantidad_pro">Cantidad:</label>
             <input type="number" id="cantidad_pro" required placeholder="10">
         </div>
+
         <button type="submit">Guardar Producto</button>
     </form>
     <div id="mensaje"></div>
@@ -103,7 +209,6 @@
         const cantidad = document.getElementById('cantidad_pro').value.trim();
         
         if (nombre.length > 0) {
-            // Toma las primeras 3 letras del nombre (o las que tenga) y las une con la cantidad
             const prefijo = nombre.substring(0, 3).toUpperCase().replace(/\s+/g, '');
             const sufijo = cantidad.length > 0 ? cantidad : '0';
             document.getElementById('codigo_pro').value = `${prefijo}-${sufijo}`;
@@ -118,21 +223,18 @@
     document.getElementById('productForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const fileInput = document.getElementById('imagen_file');
-        const fileName = fileInput.files[0] ? `galeria/${fileInput.files[0].name}` : '';
-
         const data = {
             codigo_pro: document.getElementById('codigo_pro').value,
             nombre_pro: document.getElementById('nombre_pro').value,
             precio_pro: parseFloat(document.getElementById('precio_pro').value),
-            imagen_pro: fileName,
+            imagen_pro: document.getElementById('imagen_select').value,
             color_pro: document.getElementById('color_pro').value,
             cantidad_pro: parseInt(document.getElementById('cantidad_pro').value)
         };
 
         const mensajeDiv = document.getElementById('mensaje');
-        mensajeDiv.style.color = '#333';
-        mensajeDiv.textContent = 'Registrando...';
+        mensajeDiv.style.color = '#475569';
+        mensajeDiv.textContent = 'Registrando producto...';
 
         try {
             const response = await fetch('/api/registrar_producto', {
@@ -146,16 +248,16 @@
             const result = await response.json();
 
             if (response.ok) {
-                mensajeDiv.style.color = 'green';
+                mensajeDiv.style.color = '#10b981';
                 mensajeDiv.textContent = result.mensaje;
                 document.getElementById('productForm').reset();
                 document.getElementById('codigo_pro').value = '';
             } else {
-                mensajeDiv.style.color = 'red';
+                mensajeDiv.style.color = '#ef4444';
                 mensajeDiv.textContent = result.detail || 'Ocurrió un error al registrar.';
             }
         } catch (error) {
-            mensajeDiv.style.color = 'red';
+            mensajeDiv.style.color = '#ef4444';
             mensajeDiv.textContent = 'Error de conexión con el servidor.';
             console.error('Error:', error);
         }
