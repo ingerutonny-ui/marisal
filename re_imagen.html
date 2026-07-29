@@ -39,14 +39,14 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        input:focus {
+        input:focus, select:focus {
             border-color: #007bff;
             outline: none;
         }
-        button {
+        button[type="submit"] {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            background: linear-gradient(135deg, #1d2671, #c33764);
             border: none;
             color: white;
             font-weight: bold;
@@ -54,7 +54,7 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        button:hover {
+        button[type="submit"]:hover {
             opacity: 0.9;
         }
         #mensaje {
@@ -104,9 +104,41 @@
         <div class="form-group">
             <label>SELECCIONAR IMAGEN:</label>
             <select id="imagen_pro" onchange="actualizarCodigoAutomatico()">
+                <!-- 10 Cabezas -->
                 <option value="galeria/cabeza_1.jpg">CABEZA 1</option>
+                <option value="galeria/cabeza_2.jpg">CABEZA 2</option>
+                <option value="galeria/cabeza_3.jpg">CABEZA 3</option>
+                <option value="galeria/cabeza_4.jpg">CABEZA 4</option>
+                <option value="galeria/cabeza_5.jpg">CABEZA 5</option>
+                <option value="galeria/cabeza_6.jpg">CABEZA 6</option>
+                <option value="galeria/cabeza_7.jpg">CABEZA 7</option>
+                <option value="galeria/cabeza_8.jpg">CABEZA 8</option>
+                <option value="galeria/cabeza_9.jpg">CABEZA 9</option>
+                <option value="galeria/cabeza_10.jpg">CABEZA 10</option>
+                
+                <!-- 10 Cuerpos -->
                 <option value="galeria/cuerpo_1.jpg">CUERPO 1</option>
+                <option value="galeria/cuerpo_2.jpg">CUERPO 2</option>
+                <option value="galeria/cuerpo_3.jpg">CUERPO 3</option>
+                <option value="galeria/cuerpo_4.jpg">CUERPO 4</option>
+                <option value="galeria/cuerpo_5.jpg">CUERPO 5</option>
+                <option value="galeria/cuerpo_6.jpg">CUERPO 6</option>
+                <option value="galeria/cuerpo_7.jpg">CUERPO 7</option>
+                <option value="galeria/cuerpo_8.jpg">CUERPO 8</option>
+                <option value="galeria/cuerpo_9.jpg">CUERPO 9</option>
+                <option value="galeria/cuerpo_10.jpg">CUERPO 10</option>
+
+                <!-- 10 Accesorios -->
                 <option value="galeria/accesorios_1.jpg">ACCESORIOS 1</option>
+                <option value="galeria/accesorios_2.jpg">ACCESORIOS 2</option>
+                <option value="galeria/accesorios_3.jpg">ACCESORIOS 3</option>
+                <option value="galeria/accesorios_4.jpg">ACCESORIOS 4</option>
+                <option value="galeria/accesorios_5.jpg">ACCESORIOS 5</option>
+                <option value="galeria/accesorios_6.jpg">ACCESORIOS 6</option>
+                <option value="galeria/accesorios_7.jpg">ACCESORIOS 7</option>
+                <option value="galeria/accesorios_8.jpg">ACCESORIOS 8</option>
+                <option value="galeria/accesorios_9.jpg">ACCESORIOS 9</option>
+                <option value="galeria/accesorios_10.jpg">ACCESORIOS 10</option>
             </select>
         </div>
 
@@ -257,7 +289,6 @@
         }
     }
 
-    // Cargar la tabla al abrir la página
     cargarProductos();
 </script>
 
