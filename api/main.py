@@ -93,13 +93,12 @@ def registrar_producto(data: dict):
     cantidad = data.get("cantidad_pro")
 
     if not codigo or not nombre or precio is None or not imagen or not color or cantidad is None:
-        raise HTTPException(status_code=400, detail="Faltan datos obligatorios para el registro del producto.")
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios.")
 
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Forzar la consulta especificando la columna exacta por su nombre
-        cursor.execute("SELECT codigo_pro FROM producto_ms WHERE codigo_pro = %s", (str(codigo).upper(),))
+        cursor.execute("SELECT * FROM producto_ms WHERE codigo_pro = %s", (str(codigo).upper(),))
         if cursor.fetchone():
             raise HTTPException(status_code=400, detail="El código de producto ya se encuentra registrado.")
 
