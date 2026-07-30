@@ -289,8 +289,8 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Renderizar la imagen asegurando la ruta correcta en la nube
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/${prod.imagen_pro}`;
+        // Renderizar la imagen incluyendo la subcarpeta galeria/ ya que están dentro de esa carpeta en el repositorio
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/${prod.imagen_pro}`;
     }
 
     function cambiarProducto(direccion) {
