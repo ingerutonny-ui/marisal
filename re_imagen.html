@@ -197,9 +197,9 @@
 
     function formatearNombreImagen(ruta) {
         if (!ruta) return "N/A";
-        // Extrae el nombre del archivo (ej. "galeria/cabeza_1.jpg" -> "cabeza_1.jpg") y lo formatea a MAYÚSCULAS sin la extensión
         const partes = ruta.split("/");
         const nombreArchivo = partes[partes.length - 1];
+        // Forzamos estrictamente el toUpperCase() aquí en JavaScript
         return nombreArchivo.substring(0, nombreArchivo.lastIndexOf(".")).toUpperCase();
     }
 
