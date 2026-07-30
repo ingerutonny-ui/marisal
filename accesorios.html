@@ -281,6 +281,7 @@
         }
     }
 
+       // Actualizar la función mostrarProductoActual() para manejar la ruta limpia
     function mostrarProductoActual() {
         if (productosAccesorios.length === 0) return;
         const prod = productosAccesorios[indiceActual];
@@ -289,8 +290,9 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Renderizar la imagen incluyendo la subcarpeta galeria/ ya que están dentro de esa carpeta en el repositorio
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/${prod.imagen_pro}`;
+        // Como en NeonDB ya está guardado con "galeria/...", evitamos duplicar la carpeta
+        let rutaImagen = prod.imagen_pro.startsWith("galeria/") ? prod.imagen_pro : `galeria/${prod.imagen_pro}`;
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/${rutaImagen}`;
     }
 
     function cambiarProducto(direccion) {
