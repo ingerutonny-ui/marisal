@@ -267,8 +267,8 @@
         try {
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
-            // Filtrar solo los que pertenecen a accesorios
-            productosAccesorios = todos.filter(p => p.imagen_pro.includes("accesorios"));
+            // Filtrar solo los productos accesorios
+            productosAccesorios = todos.filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("accesorios"));
             
             if (productosAccesorios.length > 0) {
                 mostrarProductoActual();
@@ -289,9 +289,9 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // AQUÍ ESTÁ LA RUTA EXPLÍCITA A LA CARPETA GALERIA Y CORRIGIENDO A .jpeg
-        let nombreImg = prod.imagen_pro.replace("galeria/", "").replace(".jpg", ".jpeg");
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/${nombreImg}`;
+        // Mapeo estricto basado en el índice del arreglo para buscar "accesorio_1.jpeg" hasta "accesorio_10.jpeg"
+        let numeroImagen = (indiceActual % 10) + 1;
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/accesorio_${numeroImagen}.jpeg`;
     }
 
     function cambiarProducto(direccion) {
