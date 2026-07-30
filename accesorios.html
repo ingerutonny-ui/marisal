@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
+            background: linear-gradient(135deg, #1d2671, #c33764);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,18 +24,18 @@
             max-width: 480px;
             height: 100vh;
             max-height: 900px;
-            background: #fff;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             padding: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
         }
         @media (min-width: 768px) {
             .app-container {
                 height: 92vh;
-                border-radius: 12px;
+                border-radius: 16px;
             }
         }
         /* ENCABEZADO */
@@ -48,20 +48,22 @@
         }
         .logo-img {
             max-height: 45px;
+            object-fit: contain;
         }
         .product-name-box {
             flex-grow: 1;
             margin: 0 10px;
             text-align: center;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             border: 1px solid #ccc;
             padding: 6px;
-            border-radius: 4px;
+            border-radius: 6px;
             background: #fafafa;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         .price-box {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #000;
             white-space: nowrap;
@@ -74,22 +76,25 @@
             flex-grow: 1;
             margin: 15px 0;
             position: relative;
-            background: #ffeb3b; /* Amarillo de la maqueta */
-            border-radius: 6px;
+            background: #fcfcfc;
+            border-radius: 8px;
             overflow: hidden;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
         .nav-btn {
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.75);
             color: white;
             border: none;
-            font-size: 24px;
-            padding: 15px 10px;
+            font-size: 22px;
+            padding: 15px 12px;
             cursor: pointer;
             z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background 0.2s;
         }
         .nav-btn:hover {
-            background: black;
+            background: rgba(0, 0, 0, 0.95);
         }
         .image-display {
             width: 100%;
@@ -104,7 +109,8 @@
         .image-display img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background: #fff;
         }
         /* PIE DE PÁGINA / CONTROLES */
         .footer-controls {
@@ -118,71 +124,85 @@
         .qty-select {
             padding: 8px;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid #ccc;
             width: 75px;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .stock-display {
             border: 1px solid #ccc;
             padding: 8px;
-            border-radius: 4px;
-            font-size: 12px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: bold;
             text-align: center;
             background: #fafafa;
-            width: 90px;
+            width: 85px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .mio-btn {
-            background: #1d2671;
+            background: linear-gradient(135deg, #1d2671, #c33764);
             color: white;
             border: none;
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: transform 0.1s;
         }
-        .mio-btn:hover {
-            background: #131a4e;
+        .mio-btn:active {
+            transform: scale(0.95);
         }
         .cart-container {
             position: relative;
             cursor: pointer;
-            font-size: 28px;
+            font-size: 26px;
+            background: #f0f0f0;
+            padding: 6px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
         }
         .cart-badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
-            background: red;
+            top: -2px;
+            right: -2px;
+            background: #dc3545;
             color: white;
-            font-size: 11px;
+            font-size: 10px;
             padding: 2px 6px;
             border-radius: 50%;
             font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .salir-container {
             text-align: center;
             margin-top: 5px;
         }
         .salir-btn {
-            background: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #a71d2a);
             color: white;
             border: none;
-            padding: 6px 15px;
-            border-radius: 4px;
+            padding: 6px 20px;
+            border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
             font-size: 11px;
+            box-shadow: 0 3px 8px rgba(220,53,69,0.4);
         }
         .salir-btn:hover {
-            background: #c82333;
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -196,7 +216,7 @@
         <div class="price-box" id="precio_producto">BS. 0.00</div>
     </div>
 
-    <!-- CUENTO CENTRAL (IMAGEN Y NAVEGACIÓN) -->
+    <!-- CUERPO CENTRAL (IMAGEN Y NAVEGACIÓN) -->
     <div class="main-content">
         <button class="nav-btn" onclick="cambiarProducto(-1)">&#9664;</button>
         <div class="image-display">
@@ -247,7 +267,7 @@
         try {
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
-            // Filtrar solo los que pertenecen a accesorios (cuyo código o imagen contenga accesorios)
+            // Filtrar solo los que pertenecen a accesorios
             productosAccesorios = todos.filter(p => p.imagen_pro.includes("accesorios"));
             
             if (productosAccesorios.length > 0) {
