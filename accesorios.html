@@ -281,18 +281,18 @@
         }
     }
 
-       // Actualizar la función mostrarProductoActual() para manejar la ruta limpia
-        function mostrarProductoActual() {
-            if (productosAccesorios.length === 0) return;
-            const prod = productosAccesorios[indiceActual];
-            
-            document.getElementById("nombre_producto").innerText = prod.nombre_pro;
-            document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
-            document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
-            
-            // Usar directamente el valor de la base de datos (ej. galeria/accesorios_1.jpeg)
-            document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/${prod.imagen_pro}`;
-        }
+    function mostrarProductoActual() {
+        if (productosAccesorios.length === 0) return;
+        const prod = productosAccesorios[indiceActual];
+        
+        document.getElementById("nombre_producto").innerText = prod.nombre_pro;
+        document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
+        document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
+        
+        // AQUÍ ESTÁ LA RUTA EXPLÍCITA A LA CARPETA GALERIA Y CORRIGIENDO A .jpeg
+        let nombreImg = prod.imagen_pro.replace("galeria/", "").replace(".jpg", ".jpeg");
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/${nombreImg}`;
+    }
 
     function cambiarProducto(direccion) {
         if (productosAccesorios.length === 0) return;
