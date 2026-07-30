@@ -12,7 +12,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #fff;
             padding: 30px;
@@ -170,6 +170,7 @@
     <table>
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>Código</th>
                 <th>Nombre</th>
                 <th>Precio</th>
@@ -194,6 +195,14 @@
         return "PRO";
     }
 
+    function formatearNombreImagen(ruta) {
+        if (!ruta) return "N/A";
+        // Extrae el nombre del archivo (ej. "galeria/cabeza_1.jpg" -> "cabeza_1.jpg") y lo formatea a MAYÚSCULAS sin la extensión
+        const partes = ruta.split("/");
+        const nombreArchivo = partes[partes.length - 1];
+        return nombreArchivo.substring(0, nombreArchivo.lastIndexOf(".")).toUpperCase();
+    }
+
     function actualizarCodigoAutomatico() {
         const imagen = document.getElementById("imagen_pro").value;
         const nombre = document.getElementById("nombre_pro").value.trim();
@@ -216,8 +225,10 @@
             tbody.innerHTML = "";
 
             productos.forEach(prod => {
+                const nombreImagenFormateado = formatearNombreImagen(prod.imagen_pro);
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
+                    <td><strong>${nombreImagenFormateado}</strong></td>
                     <td>${prod.codigo_pro}</td>
                     <td>${prod.nombre_pro}</td>
                     <td>$${prod.precio_pro.toFixed(2)}</td>
