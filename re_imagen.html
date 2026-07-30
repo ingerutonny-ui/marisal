@@ -38,6 +38,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            text-transform: uppercase;
         }
         input:focus, select:focus {
             border-color: #007bff;
@@ -73,6 +74,7 @@
         th, td {
             padding: 10px;
             text-align: left;
+            text-transform: uppercase;
         }
         th {
             background-color: #f2f2f2;
@@ -84,6 +86,7 @@
             padding: 6px 10px;
             border-radius: 4px;
             cursor: pointer;
+            text-transform: none;
         }
         .btn-eliminar:hover {
             background: #c82333;
@@ -104,7 +107,6 @@
         <div class="form-group">
             <label>SELECCIONAR IMAGEN:</label>
             <select id="imagen_pro" onchange="actualizarCodigoAutomatico()">
-                <!-- 10 Cabezas -->
                 <option value="galeria/cabeza_1.jpg">CABEZA 1</option>
                 <option value="galeria/cabeza_2.jpg">CABEZA 2</option>
                 <option value="galeria/cabeza_3.jpg">CABEZA 3</option>
@@ -116,7 +118,6 @@
                 <option value="galeria/cabeza_9.jpg">CABEZA 9</option>
                 <option value="galeria/cabeza_10.jpg">CABEZA 10</option>
                 
-                <!-- 10 Cuerpos -->
                 <option value="galeria/cuerpo_1.jpg">CUERPO 1</option>
                 <option value="galeria/cuerpo_2.jpg">CUERPO 2</option>
                 <option value="galeria/cuerpo_3.jpg">CUERPO 3</option>
@@ -128,7 +129,6 @@
                 <option value="galeria/cuerpo_9.jpg">CUERPO 9</option>
                 <option value="galeria/cuerpo_10.jpg">CUERPO 10</option>
 
-                <!-- 10 Accesorios -->
                 <option value="galeria/accesorios_1.jpg">ACCESORIOS 1</option>
                 <option value="galeria/accesorios_2.jpg">ACCESORIOS 2</option>
                 <option value="galeria/accesorios_3.jpg">ACCESORIOS 3</option>
@@ -144,7 +144,7 @@
 
         <div class="form-group">
             <label>NOMBRE DEL PRODUCTO:</label>
-            <input type="text" id="nombre_pro" required oninput="actualizarCodigoAutomatico()">
+            <input type="text" id="nombre_pro" required oninput="forzarMayusculas(this); actualizarCodigoAutomaticO();">
         </div>
 
         <div class="form-group">
@@ -154,7 +154,7 @@
 
         <div class="form-group">
             <label>COLOR:</label>
-            <input type="text" id="color_pro" required>
+            <input type="text" id="color_pro" required oninput="forzarMayusculas(this)">
         </div>
 
         <div class="form-group">
@@ -180,13 +180,16 @@
             </tr>
         </thead>
         <tbody id="tablaProductos">
-            <!-- Los productos se cargarán dinámicamente aquí -->
         </tbody>
     </table>
 </div>
 
 <script>
     const API_URL = "https://marisal.onrender.com/api";
+
+    function forzarMayusculas(elemento) {
+        elemento.value = elemento.value.toUpperCase();
+    }
 
     function obtenerPrefijo(imagen) {
         if (imagen.includes("cabeza")) return "CA";
@@ -199,17 +202,16 @@
         if (!ruta) return "N/A";
         const partes = ruta.split("/");
         const nombreArchivo = partes[partes.length - 1];
-        // Forzamos estrictamente el toUpperCase() aquí en JavaScript
         return nombreArchivo.substring(0, nombreArchivo.lastIndexOf(".")).toUpperCase();
     }
 
-    function actualizarCodigoAutomatico() {
+    function actualizarCodigoAutomaticO() {
         const imagen = document.getElementById("imagen_pro").value;
-        const nombre = document.getElementById("nombre_pro").value.trim();
+        const nombre = document.getElementById("nombre_pro").value.trim().toUpperCase();
         const prefijo = obtenerPrefijo(imagen);
         
         if (nombre.length > 0) {
-            const palabra = nombre.split(" ")[0].toUpperCase();
+            const palabra = nombre.split(" ")[0];
             const randomNum = Math.floor(Math.random() * 90) + 10;
             document.getElementById("codigo_pro").value = `${prefijo}-${palabra}-${randomNum}`;
         } else {
@@ -247,11 +249,11 @@
         e.preventDefault();
 
         const data = {
-            codigo_pro: document.getElementById("codigo_pro").value,
+            codigo_pro: document.getElementById("codigo_pro").value.toUpperCase(),
             imagen_pro: document.getElementById("imagen_pro").value,
-            nombre_pro: document.getElementById("nombre_pro").value,
+            nombre_pro: document.getElementById("nombre_pro").value.toUpperCase(),
             precio_pro: parseFloat(document.getElementById("precio_pro").value),
-            color_pro: document.getElementById("color_pro").value,
+            color_pro: document.getElementById("color_pro").value.toUpperCase(),
             cantidad_pro: parseInt(document.getElementById("cantidad_pro").value)
         };
 
