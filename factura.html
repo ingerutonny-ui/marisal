@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FACTURA - MARISAL</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            text-transform: uppercase;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f1f5f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .invoice-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 700px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .info-block div {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #111;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+            font-weight: bold;
+        }
+        td {
+            border-bottom: 1px solid #eee;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .totals-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+        .grand-total-box {
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            border: 2px solid #000;
+            padding: 12px 15px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 10px;
+            background: #fafafa;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        .btn-comprar {
+            flex: 1;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+        .btn-salir-factura {
+            flex: 1;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* MODALES CON EFECTO VENTANA HÚMEDA / DIFUMINADO */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #e2e8f0;
+        }
+        .qr-img {
+            width: 250px;
+            height: 250px;
+            object-fit: contain;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
+        }
+        .btn-listo {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            width: 100%;
+        }
+        .gracias-text {
+            font-size: 36px;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .gracias-sub {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-container">
+    <div class="invoice-header">
+        <div class="info-block">
+            <div class="section-title">DATOS DEL CLIENTE</div>
+            <div id="cli_nombre">CARGANDO...</div>
+            <div id="cli_codigo">CÓDIGO: ---</div>
+            <div id="cli_celular">CEL: ---</div>
+        </div>
+        
+        <div style="flex-grow: 1; display: flex; justify-content: center;">
+            <div style="width: 2px; background: #000; height: 80px;"></div>
+        </div>
+
+        <div class="info-block" style="text-align: right;">
+            <div class="section-title">DATOS DE LA EMPRESA</div>
+            <div>ACCESORIOS MARISAL</div>
+            <div>LA PAZ - BOLIVIA</div>
+            <div>TEL: 70000000</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Detalle</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-right">Precio</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_detalles">
+            <!-- Se llena dinámicamente -->
+        </tbody>
+    </table>
+
+    <div class="totals-section">
+        <div class="grand-total-box">
+            <span>TOTAL</span>
+            <span id="total_general">BS. 0.00</span>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn-comprar" onclick="abrirModalQR()">COMPRAR</button>
+        <button class="btn-salir-factura" onclick="abrirModalGracias()">SALIR</button>
+    </div>
+</div>
+
+<!-- MODAL QR -->
+<div id="modalQR" class="modal-overlay">
+    <div class="modal-content">
+        <div class="section-title" style="font-size: 14px;">ESCANEA PARA PAGAR</div>
+        <img src="qr.jpeg" alt="Código QR" class="qr-img">
+        <div style="font-size: 12px; color: #475569; font-weight: bold;">REALIZA TU PAGO POR QR</div>
+        <button class="btn-listo" onclick="finalizarCompraExitosa()">LISTO</button>
+    </div>
+</div>
+
+<!-- MODAL GRACIAS -->
+<div id="modalGracias" class="modal-overlay">
+    <div class="modal-content">
+        <div class="gracias-text">¡GRACIAS!</div>
+        <div class="gracias-sub">Esperamos verte pronto por Accesorios Marisal.</div>
+        <button class="btn-listo" onclick="regresarInicio()">ACEPTAR</button>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://marisal.onrender.com/api";
+
+    async function cargarFactura() {
+        const codigoCli = localStorage.getItem("codigo_cli");
+        if (!codigoCli) {
+            alert("No hay un cliente activo.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/factura_reciente/${codigoCli}`);
+            if (!response.ok) throw new Error("No se pudo cargar la factura.");
+            const data = await response.json();
+
+            document.getElementById("cli_nombre").innerText = data.cliente.nombre;
+            document.getElementById("cli_codigo").innerText = `CÓDIGO: ${data.cliente.codigo}`;
+            document.getElementById("cli_celular").innerText = `CEL: ${data.cliente.celular}`;
+
+            const tbody = document.getElementById("tabla_detalles");
+            tbody.innerHTML = "";
+
+            data.detalles.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${item.detalle}</td>
+                    <td class="text-center">${String(item.cantidad).padStart(2, '0')}</td>
+                    <td class="text-right">BS. ${item.precio.toFixed(2)}</td>
+                    <td class="text-right">BS. ${item.total.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("total_general").innerText = `BS. ${data.total_his.toFixed(2)}`;
+
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al obtener el detalle de la factura.");
+        }
+    }
+
+    function abrirModalQR() {
+        document.getElementById("modalQR").style.display = "flex";
+    }
+
+    function abrirModalGracias() {
+        document.getElementById("modalGracias").style.display = "flex";
+    }
+
+    function finalizarCompraExitosa() {
+        alert("¡COMPRA CONFIRMADA Y PAGADA CON ÉXITO!");
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "index.html";
+    }
+
+    function regresarInicio() {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "index.html";
+    }
+
+    cargarFactura();
+</script>
+
+</body>
+</html>
