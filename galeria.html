@@ -109,7 +109,7 @@
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            padding: 30px;
+            padding: 20px 30px;
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -118,32 +118,32 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             transform-origin: center;
         }
 
         @media (min-width: 768px) {
             .gallery-card {
-                transform: scale(1.25);
+                transform: scale(1.15);
             }
         }
 
         h2 {
             text-align: center;
             color: #1e293b;
-            font-size: 16px;
+            font-size: 15px;
             letter-spacing: 1px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .category-btn {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background: linear-gradient(135deg, #ff69b4, #00bfff);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             font-weight: bold;
             letter-spacing: 1px;
@@ -200,7 +200,7 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA 
+    <!-- PANTALLA DE CARGA -->
     <div id="loading-screen">
         <img src="marisal--2026.png" alt="Logo" class="loading-logo">
         <div class="progress-bar-container">
@@ -260,7 +260,6 @@
         });
 
         function irCategoria(categoria) {
-            // Aquí puedes redirigir a la vista de productos de la categoría seleccionada
             window.location.href = `${categoria}.html`;
         }
 
