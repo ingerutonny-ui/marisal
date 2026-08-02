@@ -152,10 +152,17 @@ def eliminar_producto(codigo: str):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("DELETE FROM producto_ms WHERE codigo_pro = %s", (codigo.upper(),))
+        codigo_upper = codigo.upper()
+        # Primero eliminar los registros de ventas asociados para evitar conflicto de llave foránea
+        cursor.execute("DELETE FROM venta_ms WHERE codigo_pro = %s", (codigo_upper,))
+        
+        # Luego eliminar el producto
+        cursor.execute("DELETE FROM producto_ms WHERE codigo_pro = %s", (codigo_upper,))
         conn.commit()
+        
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Producto no encontrado")
+            
         return {"mensaje": "Producto eliminado exitosamente"}
     except HTTPException as he:
         raise he
