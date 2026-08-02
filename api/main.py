@@ -165,3 +165,43 @@ def eliminar_producto(codigo: str):
     finally:
         cursor.close()
         conn.close()
+
+@app.post("/api/actualizar_stock")
+def actualizar_stock(data: dict):
+    codigo = data.get("codigo_pro")
+    cantidad = data.get("cantidad_pro")
+
+    if not codigo or cantidad is None:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Verificar si el producto existe
+        cursor.execute("SELECT * FROM producto_ms WHERE codigo_pro = %s", (str(codigo).upper(),))
+        if not cursor.fetchone():
+            raise HTTPException(status_code=404, detail="El producto no existe.")
+
+        # Actualizar el stock
+        cursor.execute(
+            """
+            UPDATE producto_ms 
+            SET cantidad_pro = %s 
+            WHERE codigo_pro = %s
+            """,
+            (int(cantidad), str(codigo).upper())
+        )
+        conn.commit()
+        return {
+            "mensaje": "Stock actualizado exitosamente",
+            "codigo": str(codigo).upper(),
+            "nuevo_stock": int(cantidad)
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
