@@ -301,9 +301,8 @@
     let productosCabeza = [];
     let indiceActual = 0;
     let totalCompras = 0;
-    let listaCarritoCompras = []; // Almacena temporalmente los items comprados para el historial
+    let listaCarritoCompras = [];
 
-    // Llenar lista desplegable del 1 al 100
     const selectQty = document.getElementById("cantidad_comprar");
     for (let i = 1; i <= 100; i++) {
         let opt = document.createElement("option");
@@ -403,7 +402,6 @@
                     document.getElementById("etiqueta_agotado").style.display = "block";
                 }
 
-                // Registrar en el carrito local para el Historial/Factura
                 totalCompras += cantidadElegida;
                 document.getElementById("cart-counter").innerText = totalCompras;
 
@@ -424,24 +422,19 @@
     }
 
     function verCarrito() {
-        alert(`TIENES ${totalCompras} COMPRAS REALIZADAS EN TOTAL.`);
+        alert(`TIENES ${totalCompras} UNIDADES COMPRADAS EN TOTAL.`);
     }
 
     async function salirYRegistrarHistorial() {
         if (listaCarritoCompras.length === 0) {
-            // Si no hay compras, sale directamente
             window.location.href = 'galeria.html';
             return;
         }
 
         try {
-            // Calcular el total general del historial
             const totalHis = listaCarritoCompras.reduce((acc, item) => acc + item.total_ven, 0);
-            
-            // Suponemos un cliente predeterminado o actual guardado en localStorage (ej. "CLI-01")
             const codigoCli = localStorage.getItem("codigo_cli") || "CLI-01"; 
 
-            // Registrar en HISTORIAL_MS y VENTA_MS a través del backend
             const response = await fetch(`${API_URL}/registrar_historial`, {
                 method: "POST",
                 headers: {
@@ -456,9 +449,9 @@
             });
 
             if (response.ok) {
-                alert(`¡COMPRAS REGISTRADAS CON ÉXITO! Saliendo al menú principal...`);
+                alert(`¡COMPRAS REGISTRADAS CON ÉXITO EN EL HISTORIAL! Saliendo...`);
             } else {
-                alert(`Saliendo... (Nota: El historial no se pudo sincronizar por completo en el servidor).`);
+                alert(`Saliendo... (Ocurrió un detalle al registrar en el servidor).`);
             }
         } catch (error) {
             console.error("Error al registrar historial:", error);
