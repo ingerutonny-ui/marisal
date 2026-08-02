@@ -205,3 +205,63 @@ def actualizar_stock(data: dict):
     finally:
         cursor.close()
         conn.close()
+
+@app.post("/api/registrar_historial")
+def registrar_historial(data: dict):
+    codigo_cli = data.get("codigo_cli")
+    lugar_ven = data.get("lugar_ven")
+    total_his = data.get("total_his")
+    detalles = data.get("detalles", [])
+
+    if not codigo_cli or not lugar_ven or total_his is None:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios para el historial.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # 1. Insertar la cabecera en historial_ms
+        # Nota: Usamos RETURNING codigo_his para obtener el ID autoincremental generado
+        cursor.execute(
+            """
+            INSERT INTO historial_ms (codigo_cli, lugar_ven, total_his)
+            VALUES (%s, %s, %s)
+            RETURNING codigo_his
+            """,
+            (str(codigo_cli).upper(), str(lugar_ven).upper(), float(total_his))
+        }
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=500, detail="No se pudo generar el código de historial.")
+        
+        codigo_his = row[0]
+
+        # 2. Insertar cada detalle de venta en venta_ms
+        for item in detalles:
+            codigo_pro = item.get("codigo_pro")
+            cantidad_ven = item.get("cantidad_ven")
+            total_ven = item.get("total_ven")
+
+            if not codigo_pro or cantidad_ven is None or total_ven is None:
+                continue
+
+            cursor.execute(
+                """
+                INSERT INTO venta_ms (codigo_his, codigo_pro, cantidad_ven, total_ven)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (int(codigo_his), str(codigo_pro).upper(), int(cantidad_ven), float(total_ven))
+            )
+
+        conn.commit()
+        return {
+            "mensaje": "Historial y ventas registrados exitosamente",
+            "codigo_his": codigo_his
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
