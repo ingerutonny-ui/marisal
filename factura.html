@@ -35,21 +35,15 @@
         }
         .invoice-header {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 2px solid #000;
             padding-bottom: 15px;
             margin-bottom: 20px;
-        }
-        @media (min-width: 768px) {
-            .invoice-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
+            gap: 10px;
         }
         .logo-img {
-            max-height: 50px;
+            max-height: 55px;
             object-fit: contain;
         }
         .section-title {
@@ -230,23 +224,16 @@
 <body>
 
 <div class="invoice-container">
+    <!-- ENCABEZADO MODIFICADO: CLIENTE IZQUIERDA / LOGO DERECHA -->
     <div class="invoice-header">
-        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-            <img src="marisal--2026.png" alt="LOGO" class="logo-img">
-            <div class="info-block" style="text-align: right;">
-                <div class="section-title">DATOS DE LA EMPRESA</div>
-                <div>ACCESORIOS MARISAL</div>
-                <div>LA PAZ - BOLIVIA</div>
-                <div>TEL: 70000000</div>
-            </div>
+        <div class="info-block">
+            <div class="section-title">DATOS DEL CLIENTE</div>
+            <div id="cli_nombre">CARGANDO...</div>
+            <div id="cli_codigo">CÓDIGO: ---</div>
+            <div id="cli_celular">CEL: ---</div>
         </div>
-        <div style="width: 100%; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-            <div class="info-block">
-                <div class="section-title">DATOS DEL CLIENTE</div>
-                <div id="cli_nombre">CARGANDO...</div>
-                <div id="cli_codigo">CÓDIGO: ---</div>
-                <div id="cli_celular">CEL: ---</div>
-            </div>
+        <div class="info-block" style="text-align: right;">
+            <img src="marisal--2026.png" alt="LOGO" class="logo-img">
         </div>
     </div>
 
@@ -285,7 +272,7 @@
         <div class="section-title" style="font-size: 13px;">ESCANEA PARA PAGAR</div>
         <img src="qr.jpeg" alt="Código QR" class="qr-img">
         <div class="monto-pagar-text" id="monto_qr_display">TOTAL A PAGAR: BS. 0.00</div>
-        <!-- div style="font-size: 11px; color: #475569; font-weight: bold;">TIENE UNA HORA PARA HACERLO</div-->
+        <div style="font-size: 11px; color: #475569; font-weight: bold;">REALIZA TU PAGO POR QR</div>
         <button class="btn-listo" onclick="finalizarCompraExitosa()">LISTO</button>
     </div>
 </div>
@@ -303,6 +290,8 @@
     const API_URL = "https://marisal.onrender.com/api";
     let codigoHisActual = null;
     let montoTotalActual = 0;
+    let nombreClienteActual = "";
+    let cantidadTotalProductos = 0;
 
     async function cargarFactura() {
         const codigoCli = localStorage.getItem("codigo_cli");
@@ -319,15 +308,18 @@
 
             codigoHisActual = data.codigo_his;
             montoTotalActual = data.total_his;
+            nombreClienteActual = data.cliente.nombre;
 
-            document.getElementById("cli_nombre").innerText = data.cliente.nombre;
+            document.getElementById("cli_nombre").innerText = nombreClienteActual;
             document.getElementById("cli_codigo").innerText = `CÓDIGO: ${data.cliente.codigo}`;
             document.getElementById("cli_celular").innerText = `CEL: ${data.cliente.celular}`;
 
             const tbody = document.getElementById("tabla_detalles");
             tbody.innerHTML = "";
 
+            cantidadTotalProductos = 0;
             data.detalles.forEach(item => {
+                cantidadTotalProductos += item.cantidad;
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${item.detalle}</td>
@@ -353,6 +345,16 @@
 
     function finalizarCompraExitosa() {
         alert("Compra confirmada, esperando el pago de confirmación");
+
+        // Construir mensaje de WhatsApp para el número 76260348
+        const numeroWhatsApp = "59176260348";
+        const mensaje = `El cliente ${nombreClienteActual} hizo una compra de ${cantidadTotalProductos} productos y debe depositar BS. ${montoTotalActual.toFixed(2)}`;
+        const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
+
+        // Abrir WhatsApp en una pestaña nueva
+        window.open(urlWhatsApp, "_blank");
+
+        // Limpiar sesión y retornar al index
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = "index.html";
