@@ -299,7 +299,7 @@
 <script>
     const API_URL = "https://marisal.onrender.com/api";
     let productosCabeza = [];
-    let indiceActual = 0; // Iniciamos en 0 para que el primer elemento sea el #1
+    let indiceActual = 0;
     let totalCompras = 0;
 
     // Llenar lista desplegable del 1 al 100
@@ -316,13 +316,13 @@
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
             
-            // Filtramos los de cabeza y los ordenamos alfabéticamente por código para mantener siempre el orden limpio
+            // Filtramos los de cabeza y los ordenamos estrictamente por el código (ej. CABEZA_1, CABEZA_2...)
             productosCabeza = todos
-                .filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("cabeza"))
-                .sort((a, b) => a.codigo_pro.localeCompare(b.codigo_pro));
+                .filter(p => p.codigo_pro && p.codigo_pro.toUpperCase().includes("CABEZA"))
+                .sort((a, b) => a.codigo_pro.localeCompare(b.codigo_pro, undefined, { numeric: true }));
             
             if (productosCabeza.length > 0) {
-                indiceActual = 0; // Arrancamos obligatoriamente en el primer elemento (0 -> #1)
+                indiceActual = 0;
                 mostrarProductoActual();
             } else {
                 document.getElementById("nombre_producto").innerText = "SIN PRODUCTOS";
@@ -341,12 +341,15 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Número secuencial exacto empezando en 1 (#1, #2, #3...)
-        let numSecuencial = indiceActual + 1;
-        document.getElementById("num_producto_display").innerText = `#${numSecuencial}`;
+        // Extraer el número exacto del código (Ej: de "CABEZA_1" extrae "1", de "CABEZA_4" extrae "4")
+        let matchNumero = prod.codigo_pro.match(/\d+/);
+        let numeroReal = matchNumero ? matchNumero[0] : (indiceActual + 1);
         
-        // Cargar la imagen correspondiente de forma sincronizada con el número secuencial
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numSecuencial}.jpeg`;
+        // Mostrar abajo de CABEZA el número exacto (#1, #4, etc.)
+        document.getElementById("num_producto_display").innerText = `#${numeroReal}`;
+        
+        // Cargar la imagen correspondiente utilizando exactamente ese número extraído
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numeroReal}.jpeg`;
 
         // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
         const etiquetaAgotado = document.getElementById("etiqueta_agotado");
