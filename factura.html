@@ -13,7 +13,7 @@
         body {
             background: #f1f5f9;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,41 +23,73 @@
             background: #ffffff;
             width: 100%;
             max-width: 700px;
-            padding: 40px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             position: relative;
         }
+        @media (min-width: 768px) {
+            .invoice-container {
+                padding: 40px;
+            }
+        }
         .invoice-header {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            flex-direction: column;
+            gap: 15px;
             border-bottom: 2px solid #000;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .invoice-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        .logo-img {
+            max-height: 50px;
+            object-fit: contain;
         }
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             letter-spacing: 1px;
         }
         .info-block div {
-            font-size: 13px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.5;
             color: #111;
             font-weight: bold;
+        }
+        @media (min-width: 768px) {
+            .info-block div {
+                font-size: 13px;
+            }
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            min-width: 450px;
         }
         th, td {
-            padding: 12px 10px;
+            padding: 10px 8px;
             text-align: left;
-            font-size: 13px;
+            font-size: 12px;
+        }
+        @media (min-width: 768px) {
+            th, td {
+                font-size: 13px;
+                padding: 12px 10px;
+            }
         }
         th {
             border-top: 2px solid #000;
@@ -77,24 +109,31 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            margin-top: 20px;
+            margin-top: 15px;
         }
         .grand-total-box {
             display: flex;
             justify-content: space-between;
-            width: 300px;
+            width: 100%;
+            max-width: 280px;
             border: 2px solid #000;
-            padding: 12px 15px;
-            font-size: 15px;
+            padding: 10px 15px;
+            font-size: 14px;
             font-weight: bold;
-            margin-top: 10px;
             background: #fafafa;
         }
         .action-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            gap: 15px;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        @media (min-width: 768px) {
+            .action-buttons {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 15px;
+            }
         }
         .btn-comprar {
             flex: 1;
@@ -136,24 +175,31 @@
             align-items: center;
             z-index: 9999;
             flex-direction: column;
+            padding: 15px;
         }
         .modal-content {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             text-align: center;
-            max-width: 400px;
-            width: 90%;
+            max-width: 380px;
+            width: 100%;
             border: 1px solid #e2e8f0;
         }
         .qr-img {
-            width: 250px;
-            height: 250px;
+            width: 220px;
+            height: 220px;
             object-fit: contain;
-            margin: 15px 0;
+            margin: 10px 0;
             border-radius: 8px;
             border: 2px solid #cbd5e1;
+        }
+        .monto-pagar-text {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0284c7;
+            margin: 8px 0;
         }
         .btn-listo {
             background: #0284c7;
@@ -168,14 +214,14 @@
             width: 100%;
         }
         .gracias-text {
-            font-size: 36px;
+            font-size: 30px;
             font-weight: 900;
             color: #0f172a;
             letter-spacing: 2px;
             margin-bottom: 10px;
         }
         .gracias-sub {
-            font-size: 14px;
+            font-size: 13px;
             color: #64748b;
             margin-bottom: 20px;
         }
@@ -185,38 +231,40 @@
 
 <div class="invoice-container">
     <div class="invoice-header">
-        <div class="info-block">
-            <div class="section-title">DATOS DEL CLIENTE</div>
-            <div id="cli_nombre">CARGANDO...</div>
-            <div id="cli_codigo">CÓDIGO: ---</div>
-            <div id="cli_celular">CEL: ---</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <img src="marisal--2026.png" alt="LOGO" class="logo-img">
+            <div class="info-block" style="text-align: right;">
+                <div class="section-title">DATOS DE LA EMPRESA</div>
+                <div>ACCESORIOS MARISAL</div>
+                <div>LA PAZ - BOLIVIA</div>
+                <div>TEL: 70000000</div>
+            </div>
         </div>
-        
-        <div style="flex-grow: 1; display: flex; justify-content: center;">
-            <div style="width: 2px; background: #000; height: 80px;"></div>
-        </div>
-
-        <div class="info-block" style="text-align: right;">
-            <div class="section-title">DATOS DE LA EMPRESA</div>
-            <div>ACCESORIOS MARISAL</div>
-            <div>LA PAZ - BOLIVIA</div>
-            <div>TEL: 70000000</div>
+        <div style="width: 100%; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+            <div class="info-block">
+                <div class="section-title">DATOS DEL CLIENTE</div>
+                <div id="cli_nombre">CARGANDO...</div>
+                <div id="cli_codigo">CÓDIGO: ---</div>
+                <div id="cli_celular">CEL: ---</div>
+            </div>
         </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Detalle</th>
-                <th class="text-center">Cantidad</th>
-                <th class="text-right">Precio</th>
-                <th class="text-right">Total</th>
-            </tr>
-        </thead>
-        <tbody id="tabla_detalles">
-            <!-- Se llena dinámicamente -->
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Detalle</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-right">Precio</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody id="tabla_detalles">
+                <!-- Se llena dinámicamente -->
+            </tbody>
+        </table>
+    </div>
 
     <div class="totals-section">
         <div class="grand-total-box">
@@ -227,16 +275,17 @@
 
     <div class="action-buttons">
         <button class="btn-comprar" onclick="abrirModalQR()">COMPRAR</button>
-        <button class="btn-salir-factura" onclick="abrirModalGracias()">SALIR</button>
+        <button class="btn-salir-factura" onclick="cancelarYSalir()">SALIR</button>
     </div>
 </div>
 
 <!-- MODAL QR -->
 <div id="modalQR" class="modal-overlay">
     <div class="modal-content">
-        <div class="section-title" style="font-size: 14px;">ESCANEA PARA PAGAR</div>
+        <div class="section-title" style="font-size: 13px;">ESCANEA PARA PAGAR</div>
         <img src="qr.jpeg" alt="Código QR" class="qr-img">
-        <div style="font-size: 12px; color: #475569; font-weight: bold;">REALIZA TU PAGO POR QR</div>
+        <div class="monto-pagar-text" id="monto_qr_display">TOTAL A PAGAR: BS. 0.00</div>
+        <div style="font-size: 11px; color: #475569; font-weight: bold;">REALIZA TU PAGO POR QR</div>
         <button class="btn-listo" onclick="finalizarCompraExitosa()">LISTO</button>
     </div>
 </div>
@@ -252,6 +301,8 @@
 
 <script>
     const API_URL = "https://marisal.onrender.com/api";
+    let codigoHisActual = null;
+    let montoTotalActual = 0;
 
     async function cargarFactura() {
         const codigoCli = localStorage.getItem("codigo_cli");
@@ -265,6 +316,9 @@
             const response = await fetch(`${API_URL}/factura_reciente/${codigoCli}`);
             if (!response.ok) throw new Error("No se pudo cargar la factura.");
             const data = await response.json();
+
+            codigoHisActual = data.codigo_his;
+            montoTotalActual = data.total_his;
 
             document.getElementById("cli_nombre").innerText = data.cliente.nombre;
             document.getElementById("cli_codigo").innerText = `CÓDIGO: ${data.cliente.codigo}`;
@@ -284,7 +338,8 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById("total_general").innerText = `BS. ${data.total_his.toFixed(2)}`;
+            document.getElementById("total_general").innerText = `BS. ${montoTotalActual.toFixed(2)}`;
+            document.getElementById("monto_qr_display").innerText = `TOTAL A PAGAR: BS. ${montoTotalActual.toFixed(2)}`;
 
         } catch (error) {
             console.error("Error:", error);
@@ -296,15 +351,24 @@
         document.getElementById("modalQR").style.display = "flex";
     }
 
-    function abrirModalGracias() {
-        document.getElementById("modalGracias").style.display = "flex";
-    }
-
     function finalizarCompraExitosa() {
-        alert("¡COMPRA CONFIRMADA Y PAGADA CON ÉXITO!");
+        alert("Compra confirmada, esperando el pago de confirmación");
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = "index.html";
+    }
+
+    async function cancelarYSalir() {
+        if (codigoHisActual) {
+            try {
+                await fetch(`${API_URL}/cancelar_compra/${codigoHisActual}`, {
+                    method: "POST"
+                });
+            } catch (e) {
+                console.error("Error al devolver el stock:", e);
+            }
+        }
+        document.getElementById("modalGracias").style.display = "flex";
     }
 
     function regresarInicio() {
