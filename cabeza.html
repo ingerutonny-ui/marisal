@@ -119,14 +119,30 @@
             align-items: center;
             padding-top: 10px;
             border-top: 2px solid #eee;
-            gap: 8px;
+            gap: 6px;
+        }
+        /* ETIQUETA DE CATEGORÍA ACTUAL EN LA ESQUINA INFERIOR IZQUIERDA */
+        .category-indicator {
+            border: 1px solid #00c6ff;
+            background: #e0f7fa;
+            color: #01579b;
+            padding: 8px 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            width: 85px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .qty-select {
             padding: 8px;
             font-weight: bold;
             border-radius: 6px;
             border: 1px solid #ccc;
-            width: 75px;
+            width: 60px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
@@ -138,18 +154,18 @@
             font-weight: bold;
             text-align: center;
             background: #fafafa;
-            width: 85px;
+            width: 75px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .mio-btn {
             background: linear-gradient(135deg, #00c6ff, #0072ff);
             color: white;
             border: none;
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             display: flex;
@@ -163,7 +179,7 @@
         .cart-container {
             position: relative;
             cursor: pointer;
-            font-size: 26px;
+            font-size: 22px;
             background: #f0f0f0;
             padding: 6px;
             border-radius: 50%;
@@ -171,8 +187,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
         }
         .cart-badge {
             position: absolute;
@@ -180,8 +196,8 @@
             right: -2px;
             background: #dc3545;
             color: white;
-            font-size: 10px;
-            padding: 2px 6px;
+            font-size: 9px;
+            padding: 2px 5px;
             border-radius: 50%;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -227,6 +243,9 @@
 
     <!-- PIE DE CONTROLES -->
     <div class="footer-controls">
+        <!-- AQUÍ ESTÁ EL BLOQUE DE LA CATEGORÍA ACTUAL -->
+        <div class="category-indicator">CABEZA</div>
+
         <select id="cantidad_comprar" class="qty-select">
             <!-- Se llena dinámicamente del 1 al 100 -->
         </select>
@@ -267,7 +286,6 @@
         try {
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
-            // Filtrar solo los productos de la cabeza
             productosCabeza = todos.filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("cabeza"));
             
             if (productosCabeza.length > 0) {
@@ -289,7 +307,6 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Mapeo estricto basado en el índice del arreglo para buscar "cabeza_1.jpeg" hasta "cabeza_10.jpeg"
         let numeroImagen = (indiceActual % 10) + 1;
         document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numeroImagen}.jpeg`;
     }
@@ -324,7 +341,6 @@
         alert(`TIENES ${totalCompras} COMPRAS REALIZADAS EN TOTAL.`);
     }
 
-    // Inicializar carga de datos
     cargarCabeza();
 </script>
 
