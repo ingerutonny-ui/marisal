@@ -140,7 +140,7 @@
             border-top: 2px solid #eee;
             gap: 6px;
         }
-        /* BLOQUE IZQUIERDO: CABEZA Y DEBAJO #1 */
+        /* BLOQUE IZQUIERDO: CABEZA Y NÚMERO */
         .category-box {
             display: flex;
             flex-direction: column;
@@ -292,7 +292,7 @@
     </div>
 
     <div class="salir-container">
-        <button class="salir-btn" onclick="window.location.href='galeria.html'">SALIR</button>
+        <button class="salir-btn" onclick="salirYRegistrarHistorial()">SALIR</button>
     </div>
 </div>
 
@@ -301,6 +301,7 @@
     let productosCabeza = [];
     let indiceActual = 0;
     let totalCompras = 0;
+    let listaCarritoCompras = []; // Almacena temporalmente los items comprados para el historial
 
     // Llenar lista desplegable del 1 al 100
     const selectQty = document.getElementById("cantidad_comprar");
@@ -316,7 +317,6 @@
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
             
-            // Filtramos correctamente usando imagen_pro (que contiene CABEZA_1, CABEZA_4, etc.) y los ordenamos numéricamente
             productosCabeza = todos
                 .filter(p => p.imagen_pro && p.imagen_pro.toUpperCase().includes("CABEZA"))
                 .sort((a, b) => a.imagen_pro.localeCompare(b.imagen_pro, undefined, { numeric: true }));
@@ -341,17 +341,12 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Extraer el número exacto de imagen_pro (Ej: de "CABEZA_1" extrae "1", de "CABEZA_4" extrae "4")
         let matchNumero = prod.imagen_pro.match(/\d+/);
         let numeroReal = matchNumero ? matchNumero[0] : (indiceActual + 1);
         
-        // Mostrar abajo de CABEZA el número exacto (#1, #4, etc.)
         document.getElementById("num_producto_display").innerText = `#${numeroReal}`;
-        
-        // Cargar la imagen correspondiente utilizando exactamente ese número extraído
         document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numeroReal}.jpeg`;
 
-        // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
         const etiquetaAgotado = document.getElementById("etiqueta_agotado");
         if (prod.cantidad_pro <= 0) {
             etiquetaAgotado.style.display = "block";
@@ -408,8 +403,16 @@
                     document.getElementById("etiqueta_agotado").style.display = "block";
                 }
 
-                totalCompras += 1;
+                // Registrar en el carrito local para el Historial/Factura
+                totalCompras += cantidadElegida;
                 document.getElementById("cart-counter").innerText = totalCompras;
+
+                listaCarritoCompras.push({
+                    codigo_pro: prodActual.codigo_pro,
+                    cantidad_ven: cantidadElegida,
+                    total_ven: cantidadElegida * prodActual.precio_pro
+                });
+
                 alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
             } else {
                 alert("ERROR AL ACTUALIZAR EL STOCK EN EL SERVIDOR");
@@ -422,6 +425,46 @@
 
     function verCarrito() {
         alert(`TIENES ${totalCompras} COMPRAS REALIZADAS EN TOTAL.`);
+    }
+
+    async function salirYRegistrarHistorial() {
+        if (listaCarritoCompras.length === 0) {
+            // Si no hay compras, sale directamente
+            window.location.href = 'galeria.html';
+            return;
+        }
+
+        try {
+            // Calcular el total general del historial
+            const totalHis = listaCarritoCompras.reduce((acc, item) => acc + item.total_ven, 0);
+            
+            // Suponemos un cliente predeterminado o actual guardado en localStorage (ej. "CLI-01")
+            const codigoCli = localStorage.getItem("codigo_cli") || "CLI-01"; 
+
+            // Registrar en HISTORIAL_MS y VENTA_MS a través del backend
+            const response = await fetch(`${API_URL}/registrar_historial`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    codigo_cli: codigoCli,
+                    lugar_ven: "CABEZA",
+                    total_his: totalHis,
+                    detalles: listaCarritoCompras
+                })
+            });
+
+            if (response.ok) {
+                alert(`¡COMPRAS REGISTRADAS CON ÉXITO! Saliendo al menú principal...`);
+            } else {
+                alert(`Saliendo... (Nota: El historial no se pudo sincronizar por completo en el servidor).`);
+            }
+        } catch (error) {
+            console.error("Error al registrar historial:", error);
+        } finally {
+            window.location.href = 'galeria.html';
+        }
     }
 
     cargarCabeza();
