@@ -45,22 +45,22 @@
             align-items: center;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
-            gap: 5px;
+            gap: 6px;
         }
         .logo-img {
             max-height: 40px;
             object-fit: contain;
         }
         .codigo-badge-header {
-            background: #ffe4e6;
-            color: #e11d48;
-            border: 1px solid #fda4af;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 800;
+            color: #1e3a8a;
+            letter-spacing: 0.5px;
             white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: #f8fafc;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
         }
         .product-name-box {
             flex-grow: 1;
@@ -264,7 +264,7 @@
     <!-- ENCABEZADO -->
     <div class="header">
         <img src="marisal--2026.png" alt="LOGO" class="logo-img" onerror="this.style.display='none'">
-        <div class="codigo-badge-header" id="header_codigo_cli">CLI: ---</div>
+        <div class="codigo-badge-header" id="header_codigo_cli">---</div>
         <div class="product-name-box" id="nombre_producto">CARGANDO...</div>
         <div class="price-box" id="precio_producto">BS. 0.00</div>
     </div>
@@ -315,14 +315,18 @@
     let totalCompras = 0;
     let listaCarritoCompras = [];
 
-    // Obtener y mostrar el código del cliente activo al cargar
+    // Recuperar estrictamente el código del cliente autenticado de forma dinámica
     let clienteGuardado = JSON.parse(localStorage.getItem("cliente_actual") || "{}");
-    let codigoCliActivo = clienteGuardado.codigo || sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cliente") || "JA48";
-    codigoCliActivo = codigoCliActivo.toUpperCase();
+    let codigoCliActivo = clienteGuardado.codigo || sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cli") || localStorage.getItem("codigo_cliente");
     
-    // Asegurarnos de guardarlo unificado en localStorage para el historial
+    if (!codigoCliActivo) {
+        alert("POR FAVOR INGRESA TU CÓDIGO PRIMERO");
+        window.location.href = "index.html";
+    }
+    
+    codigoCliActivo = codigoCliActivo.toUpperCase();
     localStorage.setItem("codigo_cli", codigoCliActivo);
-    document.getElementById("header_codigo_cli").innerText = `CLI: ${codigoCliActivo}`;
+    document.getElementById("header_codigo_cli").innerText = codigoCliActivo;
 
     const selectQty = document.getElementById("cantidad_comprar");
     for (let i = 1; i <= 100; i++) {
@@ -429,7 +433,7 @@
                 listaCarritoCompras.push({
                     codigo_pro: prodActual.codigo_pro,
                     cantidad_ven: cantidadElegida,
-                    total_ven: cantidadE_total = cantidadElegida * prodActual.precio_pro
+                    total_ven: cantidadElegida * prodActual.precio_pro
                 });
 
                 alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
