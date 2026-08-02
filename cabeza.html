@@ -36,7 +36,6 @@
             .app-container {
                 height: 92vh;
                 border-radius: 16px;
-                background: linear-gradient(135deg, #00c6ff, #ffffff);
             }
         }
         /* ENCABEZADO */
@@ -122,7 +121,6 @@
             border-top: 2px solid #eee;
             gap: 6px;
         }
-        /* ETIQUETA DE CATEGORÍA ACTUAL EN LA ESQUINA INFERIOR IZQUIERDA */
         .category-indicator {
             border: 1px solid #00c6ff;
             background: #e0f7fa;
@@ -244,7 +242,6 @@
 
     <!-- PIE DE CONTROLES -->
     <div class="footer-controls">
-        <!-- AQUÍ ESTÁ EL BLOQUE DE LA CATEGORÍA ACTUAL -->
         <div class="category-indicator">CABEZA</div>
 
         <select id="cantidad_comprar" class="qty-select">
@@ -332,6 +329,10 @@
             alert("CANTIDAD SUPERA EL STOCK DISPONIBLE");
             return;
         }
+
+        // DESCONTAR EL STOCK EN MEMORIA Y ACTUALIZAR LA PANTALLA
+        prodActual.cantidad_pro -= cantidadElegida;
+        document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
 
         totalCompras += 1;
         document.getElementById("cart-counter").innerText = totalCompras;
