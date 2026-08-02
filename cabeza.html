@@ -320,7 +320,7 @@
         mostrarProductoActual();
     }
 
-    function guardarCompra() {
+    async function guardarCompra() {
         if (productosCabeza.length === 0) return;
         const cantidadElegida = parseInt(document.getElementById("cantidad_comprar").value);
         const prodActual = productosCabeza[indiceActual];
@@ -330,13 +330,33 @@
             return;
         }
 
-        // DESCONTAR EL STOCK EN MEMORIA Y ACTUALIZAR LA PANTALLA
-        prodActual.cantidad_pro -= cantidadElegida;
-        document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
+        try {
+            // ENVIAR PETICIÓN AL BACKEND PARA ACTUALIZAR EL STOCK EN LA NUBE
+            const nuevoStock = prodActual.cantidad_pro - cantidadElegida;
+            const response = await fetch(`${API_URL}/actualizar_stock`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id_pro: prodActual.id_pro,
+                    cantidad_pro: nuevoStock
+                })
+            });
 
-        totalCompras += 1;
-        document.getElementById("cart-counter").innerText = totalCompras;
-        alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+            if (response.ok) {
+                prodActual.cantidad_pro = nuevoStock;
+                document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
+                totalCompras += 1;
+                document.getElementById("cart-counter").innerText = totalCompras;
+                alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+            } else {
+                alert("ERROR AL ACTUALIZAR EL STOCK EN EL SERVIDOR");
+            }
+        } catch (error) {
+            console.error("Error de red:", error);
+            alert("ERROR DE CONEXIÓN CON EL SERVIDOR");
+        }
     }
 
     function verCarrito() {
