@@ -328,5 +328,33 @@ def factura_reciente(codigo_cli: str):
         cursor.close()
         conn.close()
 
+@app.post("/api/cancelar_compra/{codigo_his}")
+def cancelar_compra(codigo_his: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Obtener los detalles de la venta asociada a este historial
+        cursor.execute("SELECT codigo_pro, cantidad_ven FROM venta_ms WHERE codigo_his = %s", (codigo_his,))
+        detalles = cursor.fetchall()
 
+        # Devolver el stock a cada producto
+        for detalle in detalles:
+            codigo_pro, cantidad_ven = detalle[0], detalle[1]
+            cursor.execute(
+                "UPDATE producto_ms SET cantidad_pro = cantidad_pro + %s WHERE codigo_pro = %s",
+                (cantidad_ven, codigo_pro)
+            )
+
+        # Eliminar los registros de venta y el historial temporal
+        cursor.execute("DELETE FROM venta_ms WHERE codigo_his = %s", (codigo_his,))
+        cursor.execute("DELETE FROM historial_ms WHERE codigo_his = %s", (codigo_his,))
+        conn.commit()
+
+        return {"message": "Compra cancelada y stock devuelto con éxito."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
 
