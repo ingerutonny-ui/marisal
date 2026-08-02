@@ -140,37 +140,27 @@
             border-top: 2px solid #eee;
             gap: 6px;
         }
-        /* CONTENEDOR IZQUIERDO: CATEGORÍA + NÚMERO DE PRODUCTO */
-        .info-left-box {
+        /* BLOQUE IZQUIERDO: CABEZA Y DEBAJO #1 */
+        .category-box {
             display: flex;
             flex-direction: column;
-            gap: 3px;
-            width: 85px;
-        }
-        .category-indicator {
+            align-items: center;
             border: 1px solid #00c6ff;
             background: #e0f7fa;
             color: #01579b;
-            padding: 4px 4px;
+            padding: 6px 8px;
             border-radius: 6px;
-            font-size: 10px;
             font-weight: bold;
-            text-align: center;
+            width: 85px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .product-number-indicator {
-            border: 1px solid #cbd5e1;
-            background: #f8fafc;
-            color: #334155;
-            padding: 4px 4px;
-            border-radius: 6px;
+        .category-title {
             font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        .category-number {
+            font-size: 13px;
+            color: #000;
+            margin-top: 2px;
         }
         .qty-select {
             padding: 8px;
@@ -280,9 +270,9 @@
 
     <!-- PIE DE CONTROLES -->
     <div class="footer-controls">
-        <div class="info-left-box">
-            <div class="category-indicator">CABEZA</div>
-            <div class="product-number-indicator" id="num_producto_display">PROD: #--</div>
+        <div class="category-box">
+            <span class="category-title">CABEZA</span>
+            <span class="category-number" id="num_producto_display">#1</span>
         </div>
 
         <select id="cantidad_comprar" class="qty-select">
@@ -346,13 +336,12 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Mostrar el código o número real del producto de manera sincronizada
-        document.getElementById("num_producto_display").innerText = `PROD: #${prod.codigo_pro}`;
+        // Número correlativo de imagen (#1 hasta #10) según la posición actual
+        let numeroImagen = (indiceActual % 10) + 1;
+        document.getElementById("num_producto_display").innerText = `#${numeroImagen}`;
         
-        // CORRECCIÓN: Usar directamente el campo imagen_pro o extraer el número exacto sin desfasarse
-        // Si imagen_pro guarda algo como "cabeza_2.jpeg", lo usamos directamente, o mapeamos por índice real del archivo
-        let nombreImagenArchivo = prod.imagen_pro.trim();
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/${nombreImagenArchivo}`;
+        // Cargar la imagen correctamente
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numeroImagen}.jpeg`;
 
         // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
         const etiquetaAgotado = document.getElementById("etiqueta_agotado");
