@@ -45,17 +45,29 @@
             align-items: center;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
+            gap: 5px;
         }
         .logo-img {
-            max-height: 45px;
+            max-height: 40px;
             object-fit: contain;
+        }
+        .codigo-badge-header {
+            background: #ffe4e6;
+            color: #e11d48;
+            border: 1px solid #fda4af;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .product-name-box {
             flex-grow: 1;
-            margin: 0 10px;
+            margin: 0 5px;
             text-align: center;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             border: 1px solid #ccc;
             padding: 6px;
             border-radius: 6px;
@@ -63,7 +75,7 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         .price-box {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #000;
             white-space: nowrap;
@@ -140,7 +152,6 @@
             border-top: 2px solid #eee;
             gap: 6px;
         }
-        /* BLOQUE IZQUIERDO: CABEZA Y NÚMERO */
         .category-box {
             display: flex;
             flex-direction: column;
@@ -253,6 +264,7 @@
     <!-- ENCABEZADO -->
     <div class="header">
         <img src="marisal--2026.png" alt="LOGO" class="logo-img" onerror="this.style.display='none'">
+        <div class="codigo-badge-header" id="header_codigo_cli">CLI: ---</div>
         <div class="product-name-box" id="nombre_producto">CARGANDO...</div>
         <div class="price-box" id="precio_producto">BS. 0.00</div>
     </div>
@@ -302,6 +314,15 @@
     let indiceActual = 0;
     let totalCompras = 0;
     let listaCarritoCompras = [];
+
+    // Obtener y mostrar el código del cliente activo al cargar
+    let clienteGuardado = JSON.parse(localStorage.getItem("cliente_actual") || "{}");
+    let codigoCliActivo = clienteGuardado.codigo || sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cliente") || "JA48";
+    codigoCliActivo = codigoCliActivo.toUpperCase();
+    
+    // Asegurarnos de guardarlo unificado en localStorage para el historial
+    localStorage.setItem("codigo_cli", codigoCliActivo);
+    document.getElementById("header_codigo_cli").innerText = `CLI: ${codigoCliActivo}`;
 
     const selectQty = document.getElementById("cantidad_comprar");
     for (let i = 1; i <= 100; i++) {
@@ -408,7 +429,7 @@
                 listaCarritoCompras.push({
                     codigo_pro: prodActual.codigo_pro,
                     cantidad_ven: cantidadElegida,
-                    total_ven: cantidadElegida * prodActual.precio_pro
+                    total_ven: cantidadE_total = cantidadElegida * prodActual.precio_pro
                 });
 
                 alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
@@ -433,7 +454,6 @@
 
         try {
             const totalHis = listaCarritoCompras.reduce((acc, item) => acc + item.total_ven, 0);
-            const codigoCli = localStorage.getItem("codigo_cli") || "CLI-01"; 
 
             const response = await fetch(`${API_URL}/registrar_historial`, {
                 method: "POST",
@@ -441,7 +461,7 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    codigo_cli: codigoCli,
+                    codigo_cli: codigoCliActivo,
                     lugar_ven: "CABEZA",
                     total_his: totalHis,
                     detalles: listaCarritoCompras
@@ -450,13 +470,14 @@
 
             if (response.ok) {
                 alert(`¡COMPRAS REGISTRADAS CON ÉXITO EN EL HISTORIAL! Saliendo...`);
+                window.location.href = 'galeria.html';
             } else {
-                alert(`Saliendo... (Ocurrió un detalle al registrar en el servidor).`);
+                const errData = await response.json();
+                alert(`Error al registrar historial: ${errData.detail || "Error en el servidor"}`);
             }
         } catch (error) {
             console.error("Error al registrar historial:", error);
-        } finally {
-            window.location.href = 'galeria.html';
+            alert("ERROR DE CONEXIÓN CON EL SERVIDOR AL SALIR.");
         }
     }
 
