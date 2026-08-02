@@ -331,7 +331,6 @@
         }
 
         try {
-            // ENVIAR PETICIÓN AL BACKEND PARA ACTUALIZAR EL STOCK EN LA NUBE
             const nuevoStock = prodActual.cantidad_pro - cantidadElegida;
             const response = await fetch(`${API_URL}/actualizar_stock`, {
                 method: "POST",
@@ -339,7 +338,7 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    id_pro: prodActual.id_pro,
+                    codigo_pro: prodActual.codigo_pro,
                     cantidad_pro: nuevoStock
                 })
             });
