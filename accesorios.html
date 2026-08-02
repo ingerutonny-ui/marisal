@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1d2671, #c33764);
+            background: linear-gradient(135deg, #00c6ff, #ffffff);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -112,6 +112,25 @@
             object-fit: contain;
             background: #fff;
         }
+        /* ETIQUETA DE AGOTADO FLOTANTE */
+        .agotado-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 10px;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            z-index: 20;
+            display: none;
+            border: 3px solid #fff;
+            pointer-events: none;
+        }
         /* PIE DE PÁGINA / CONTROLES */
         .footer-controls {
             display: flex;
@@ -119,14 +138,29 @@
             align-items: center;
             padding-top: 10px;
             border-top: 2px solid #eee;
-            gap: 8px;
+            gap: 6px;
+        }
+        .category-indicator {
+            border: 1px solid #00c6ff;
+            background: #e0f7fa;
+            color: #01579b;
+            padding: 8px 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            width: 85px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .qty-select {
             padding: 8px;
             font-weight: bold;
             border-radius: 6px;
             border: 1px solid #ccc;
-            width: 75px;
+            width: 60px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
@@ -138,18 +172,18 @@
             font-weight: bold;
             text-align: center;
             background: #fafafa;
-            width: 85px;
+            width: 75px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .mio-btn {
-            background: linear-gradient(135deg, #1d2671, #c33764);
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
             color: white;
             border: none;
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             display: flex;
@@ -163,7 +197,7 @@
         .cart-container {
             position: relative;
             cursor: pointer;
-            font-size: 26px;
+            font-size: 22px;
             background: #f0f0f0;
             padding: 6px;
             border-radius: 50%;
@@ -171,8 +205,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
         }
         .cart-badge {
             position: absolute;
@@ -180,8 +214,8 @@
             right: -2px;
             background: #dc3545;
             color: white;
-            font-size: 10px;
-            padding: 2px 6px;
+            font-size: 9px;
+            padding: 2px 5px;
             border-radius: 50%;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -221,12 +255,16 @@
         <button class="nav-btn" onclick="cambiarProducto(-1)">&#9664;</button>
         <div class="image-display">
             <img id="imagen_producto" src="" alt="PRODUCTO">
+            <!-- ETIQUETA AGOTADO -->
+            <div id="etiqueta_agotado" class="agotado-overlay">AGOTADO...!!!</div>
         </div>
         <button class="nav-btn" onclick="cambiarProducto(1)">&#9654;</button>
     </div>
 
     <!-- PIE DE CONTROLES -->
     <div class="footer-controls">
+        <div class="category-indicator">ACCESORIOS</div>
+
         <select id="cantidad_comprar" class="qty-select">
             <!-- Se llena dinámicamente del 1 al 100 -->
         </select>
@@ -267,7 +305,6 @@
         try {
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
-            // Filtrar solo los productos accesorios
             productosAccesorios = todos.filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("accesorios"));
             
             if (productosAccesorios.length > 0) {
@@ -289,9 +326,16 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Mapeo estricto basado en el índice del arreglo para buscar "accesorio_1.jpeg" hasta "accesorio_10.jpeg"
         let numeroImagen = (indiceActual % 10) + 1;
         document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/accesorio_${numeroImagen}.jpeg`;
+
+        // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
+        const etiquetaAgotado = document.getElementById("etiqueta_agotado");
+        if (prod.cantidad_pro <= 0) {
+            etiquetaAgotado.style.display = "block";
+        } else {
+            etiquetaAgotado.style.display = "none";
+        }
     }
 
     function cambiarProducto(direccion) {
@@ -305,26 +349,59 @@
         mostrarProductoActual();
     }
 
-    function guardarCompra() {
+    async function guardarCompra() {
         if (productosAccesorios.length === 0) return;
-        const cantidadElegida = parseInt(document.getElementById("cantidad_comprar").value);
         const prodActual = productosAccesorios[indiceActual];
+
+        if (prodActual.cantidad_pro <= 0) {
+            alert("ESTE PRODUCTO ESTÁ AGOTADO");
+            return;
+        }
+
+        const cantidadElegida = parseInt(document.getElementById("cantidad_comprar").value);
 
         if (cantidadElegida > prodActual.cantidad_pro) {
             alert("CANTIDAD SUPERA EL STOCK DISPONIBLE");
             return;
         }
 
-        totalCompras += 1;
-        document.getElementById("cart-counter").innerText = totalCompras;
-        alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+        try {
+            const nuevoStock = prodActual.cantidad_pro - cantidadElegida;
+            const response = await fetch(`${API_URL}/actualizar_stock`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    codigo_pro: prodActual.codigo_pro,
+                    cantidad_pro: nuevoStock
+                })
+            });
+
+            if (response.ok) {
+                prodActual.cantidad_pro = nuevoStock;
+                document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
+                
+                if (prodActual.cantidad_pro <= 0) {
+                    document.getElementById("etiqueta_agotado").style.display = "block";
+                }
+
+                totalCompras += 1;
+                document.getElementById("cart-counter").innerText = totalCompras;
+                alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+            } else {
+                alert("ERROR AL ACTUALIZAR EL STOCK EN EL SERVIDOR");
+            }
+        } catch (error) {
+            console.error("Error de red:", error);
+            alert("ERROR DE CONEXIÓN CON EL SERVIDOR");
+        }
     }
 
     function verCarrito() {
         alert(`TIENES ${totalCompras} COMPRAS REALIZADAS EN TOTAL.`);
     }
 
-    // Inicializar carga de datos
     cargarAccesorios();
 </script>
 
