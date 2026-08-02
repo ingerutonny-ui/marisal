@@ -474,7 +474,7 @@
 
             if (response.ok) {
                 alert(`¡COMPRAS REGISTRADAS CON ÉXITO EN EL HISTORIAL! Saliendo...`);
-                window.location.href = 'galeria.html';
+                window.location.href = 'factura.html';
             } else {
                 const errData = await response.json();
                 alert(`Error al registrar historial: ${errData.detail || "Error en el servidor"}`);
