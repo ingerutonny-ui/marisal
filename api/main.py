@@ -263,3 +263,70 @@ def registrar_historial(data: dict):
     finally:
         cursor.close()
         conn.close()
+
+@app.get("/api/factura_reciente/{codigo_cli}")
+def factura_reciente(codigo_cli: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Buscar el último historial del cliente
+        cursor.execute(
+            """
+            SELECT h.codigo_his, h.fecha_his, h.lugar_ven, h.total_his, 
+                   c.nombre_cli, c.num_cel_cli, c.codigo_cli
+            FROM historial_ms h
+            JOIN cliente_ms c ON h.codigo_cli = c.codigo_cli
+            WHERE h.codigo_cli = %s
+            ORDER BY h.codigo_his DESC
+            LIMIT 1
+            """,
+            (codigo_cli.upper(),)
+        )
+        historial = cursor.fetchone()
+        if not historial:
+            raise HTTPException(status_code=404, detail="No hay historiales para este cliente.")
+
+        codigo_his = historial[0]
+
+        # Buscar los detalles de la venta
+        cursor.execute(
+            """
+            SELECT p.nombre_pro, v.cantidad_ven, (v.total_ven / v.cantidad_ven) as precio_unitario, v.total_ven
+            FROM venta_ms v
+            JOIN producto_ms p ON v.codigo_pro = p.codigo_pro
+            WHERE v.codigo_his = %s
+            """,
+            (codigo_his,)
+        )
+        items = cursor.fetchall()
+        detalles = []
+        for item in items:
+            detalles.append({
+                "detalle": item[0],
+                "cantidad": item[1],
+                "precio": float(item[2]),
+                "total": float(item[3])
+            })
+
+        return {
+            "codigo_his": codigo_his,
+            "fecha": str(historial[1]),
+            "lugar": historial[2],
+            "total_his": float(historial[3]),
+            "cliente": {
+                "nombre": historial[4],
+                "celular": historial[5],
+                "codigo": historial[6]
+            },
+            "detalles": detalles
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
