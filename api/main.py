@@ -206,6 +206,7 @@ def actualizar_stock(data: dict):
         cursor.close()
         conn.close()
 
+
 @app.post("/api/registrar_historial")
 def registrar_historial(data: dict):
     codigo_cli = data.get("codigo_cli")
@@ -219,8 +220,6 @@ def registrar_historial(data: dict):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # 1. Insertar la cabecera en historial_ms
-        # Nota: Usamos RETURNING codigo_his para obtener el ID autoincremental generado
         cursor.execute(
             """
             INSERT INTO historial_ms (codigo_cli, lugar_ven, total_his)
@@ -228,14 +227,13 @@ def registrar_historial(data: dict):
             RETURNING codigo_his
             """,
             (str(codigo_cli).upper(), str(lugar_ven).upper(), float(total_his))
-        }
+        )
         row = cursor.fetchone()
         if not row:
             raise HTTPException(status_code=500, detail="No se pudo generar el código de historial.")
         
         codigo_his = row[0]
 
-        # 2. Insertar cada detalle de venta en venta_ms
         for item in detalles:
             codigo_pro = item.get("codigo_pro")
             cantidad_ven = item.get("cantidad_ven")
