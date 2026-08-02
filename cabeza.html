@@ -316,10 +316,10 @@
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
             
-            // Filtramos los de cabeza y los ordenamos estrictamente por el código (ej. CABEZA_1, CABEZA_2...)
+            // Filtramos correctamente usando imagen_pro (que contiene CABEZA_1, CABEZA_4, etc.) y los ordenamos numéricamente
             productosCabeza = todos
-                .filter(p => p.codigo_pro && p.codigo_pro.toUpperCase().includes("CABEZA"))
-                .sort((a, b) => a.codigo_pro.localeCompare(b.codigo_pro, undefined, { numeric: true }));
+                .filter(p => p.imagen_pro && p.imagen_pro.toUpperCase().includes("CABEZA"))
+                .sort((a, b) => a.imagen_pro.localeCompare(b.imagen_pro, undefined, { numeric: true }));
             
             if (productosCabeza.length > 0) {
                 indiceActual = 0;
@@ -341,8 +341,8 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Extraer el número exacto del código (Ej: de "CABEZA_1" extrae "1", de "CABEZA_4" extrae "4")
-        let matchNumero = prod.codigo_pro.match(/\d+/);
+        // Extraer el número exacto de imagen_pro (Ej: de "CABEZA_1" extrae "1", de "CABEZA_4" extrae "4")
+        let matchNumero = prod.imagen_pro.match(/\d+/);
         let numeroReal = matchNumero ? matchNumero[0] : (indiceActual + 1);
         
         // Mostrar abajo de CABEZA el número exacto (#1, #4, etc.)
