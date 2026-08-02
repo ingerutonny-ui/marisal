@@ -299,7 +299,7 @@
 <script>
     const API_URL = "https://marisal.onrender.com/api";
     let productosCabeza = [];
-    let indiceActual = 0;
+    let indiceActual = 0; // Iniciamos en 0 para que el primer elemento sea el #1
     let totalCompras = 0;
 
     // Llenar lista desplegable del 1 al 100
@@ -315,9 +315,14 @@
         try {
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
-            productosCabeza = todos.filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("cabeza"));
+            
+            // Filtramos los de cabeza y los ordenamos alfabéticamente por código para mantener siempre el orden limpio
+            productosCabeza = todos
+                .filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("cabeza"))
+                .sort((a, b) => a.codigo_pro.localeCompare(b.codigo_pro));
             
             if (productosCabeza.length > 0) {
+                indiceActual = 0; // Arrancamos obligatoriamente en el primer elemento (0 -> #1)
                 mostrarProductoActual();
             } else {
                 document.getElementById("nombre_producto").innerText = "SIN PRODUCTOS";
@@ -336,11 +341,11 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Número secuencial exacto (#1, #2, #3...) según la posición en la lista
+        // Número secuencial exacto empezando en 1 (#1, #2, #3...)
         let numSecuencial = indiceActual + 1;
         document.getElementById("num_producto_display").innerText = `#${numSecuencial}`;
         
-        // Cargar la imagen utilizando directamente el número secuencial para asegurar que siempre muestre la foto correcta
+        // Cargar la imagen correspondiente de forma sincronizada con el número secuencial
         document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numSecuencial}.jpeg`;
 
         // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
