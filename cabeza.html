@@ -336,12 +336,12 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        // Número correlativo de imagen (#1 hasta #10) según la posición actual
-        let numeroImagen = (indiceActual % 10) + 1;
-        document.getElementById("num_producto_display").innerText = `#${numeroImagen}`;
+        // Mostrar número correlativo secuencial (#1, #2, #3...) según la posición en la lista
+        document.getElementById("num_producto_display").innerText = `#${indiceActual + 1}`;
         
-        // Cargar la imagen correctamente
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numeroImagen}.jpeg`;
+        // CORRECCIÓN: Cargar la imagen directamente usando el nombre exacto que viene de la base de datos (prod.imagen_pro)
+        let nombreImagen = prod.imagen_pro.trim();
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/${nombreImagen}`;
 
         // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
         const etiquetaAgotado = document.getElementById("etiqueta_agotado");
