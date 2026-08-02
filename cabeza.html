@@ -112,6 +112,25 @@
             object-fit: contain;
             background: #fff;
         }
+        /* ETIQUETA DE AGOTADO FLOTANTE */
+        .agotado-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 10px;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            z-index: 20;
+            display: none; /* Oculto por defecto */
+            border: 3px solid #fff;
+            pointer-events: none;
+        }
         /* PIE DE PÁGINA / CONTROLES */
         .footer-controls {
             display: flex;
@@ -236,6 +255,8 @@
         <button class="nav-btn" onclick="cambiarProducto(-1)">&#9664;</button>
         <div class="image-display">
             <img id="imagen_producto" src="" alt="PRODUCTO">
+            <!-- ETIQUETA AGOTADO -->
+            <div id="etiqueta_agotado" class="agotado-overlay">AGOTADO...!!!</div>
         </div>
         <button class="nav-btn" onclick="cambiarProducto(1)">&#9654;</button>
     </div>
@@ -307,6 +328,14 @@
         
         let numeroImagen = (indiceActual % 10) + 1;
         document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/cabeza_${numeroImagen}.jpeg`;
+
+        // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
+        const etiquetaAgotado = document.getElementById("etiqueta_agotado");
+        if (prod.cantidad_pro <= 0) {
+            etiquetaAgotado.style.display = "block";
+        } else {
+            etiquetaAgotado.style.display = "none";
+        }
     }
 
     function cambiarProducto(direccion) {
@@ -322,8 +351,14 @@
 
     async function guardarCompra() {
         if (productosCabeza.length === 0) return;
-        const cantidadElegida = parseInt(document.getElementById("cantidad_comprar").value);
         const prodActual = productosCabeza[indiceActual];
+
+        if (prodActual.cantidad_pro <= 0) {
+            alert("ESTE PRODUCTO ESTÁ AGOTADO");
+            return;
+        }
+
+        const cantidadElegida = parseInt(document.getElementById("cantidad_comprar").value);
 
         if (cantidadElegida > prodActual.cantidad_pro) {
             alert("CANTIDAD SUPERA EL STOCK DISPONIBLE");
@@ -346,6 +381,12 @@
             if (response.ok) {
                 prodActual.cantidad_pro = nuevoStock;
                 document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
+                
+                // Mostrar etiqueta de agotado si llega a cero
+                if (prodActual.cantidad_pro <= 0) {
+                    document.getElementById("etiqueta_agotado").style.display = "block";
+                }
+
                 totalCompras += 1;
                 document.getElementById("cart-counter").innerText = totalCompras;
                 alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
