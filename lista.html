@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LISTA DE CLIENTES Y COMPRAS - MARISAL</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            text-transform: uppercase;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fde047, #ca8a04);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: fit-content;
+        }
+        .header-title {
+            text-align: center;
+            color: #854d0e;
+            font-size: 22px;
+            font-weight: 800;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin: 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #fef9c3;
+            color: #854d0e;
+            font-weight: bold;
+        }
+        tr:hover {
+            background: #fafafa;
+        }
+        .btn-detalle {
+            background: linear-gradient(135deg, #fde047, #ca8a04);
+            color: #111;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 11px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .btn-detalle:hover {
+            opacity: 0.9;
+        }
+        /* CONTENEDOR DE DETALLES DESPLEGABLE */
+        .detalle-row {
+            background: #fcfcfc;
+            display: none;
+        }
+        .detalle-container {
+            padding: 15px;
+            border-left: 4px solid #ca8a04;
+            margin: 5px 0;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .detalle-container h4 {
+            margin: 0 0 10px 0;
+            color: #854d0e;
+            font-size: 13px;
+        }
+        .sub-table {
+            width: 100%;
+            font-size: 11px;
+            margin-top: 5px;
+            background: #fff;
+        }
+        .sub-table th {
+            background: #f1f1f1;
+            color: #333;
+        }
+        .volver-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .volver-btn {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        .volver-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <h2 class="header-title">REGISTRO GENERAL DE CLIENTES Y COMPRAS</h2>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>CI / CÓDIGO</th>
+                    <th>NOMBRE</th>
+                    <th>CELULAR</th>
+                    <th>COMPRAS REALIZADAS</th>
+                    <th>ACCIÓN</th>
+                </tr>
+            </thead>
+            <tbody id="tabla_clientes_body">
+                <tr>
+                    <td colspan="5" style="text-align: center;">CARGANDO CLIENTES...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="volver-container">
+        <button class="volver-btn" onclick="window.location.href='galeria.html'">VOLVER A GALERÍA</button>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://marisal.onrender.com/api";
+
+    async function cargarListaClientes() {
+        try {
+            // Nota: Asegúrate de que el endpoint en tu backend FastAPI devuelva los clientes y sus historiales/compras asociadas.
+            const response = await fetch(`${API_URL}/listar_clientes_con_compras`);
+            const clientes = await response.json();
+
+            const tbody = document.getElementById("tabla_clientes_body");
+            tbody.innerHTML = "";
+
+            if (!clientes || clientes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">NO HAY CLIENTES REGISTRADOS</td></tr>`;
+                return;
+            }
+
+            clientes.forEach((cli, index) => {
+                let trCliente = document.createElement("tr");
+                trCliente.innerHTML = `
+                    <td><strong>${cli.codigo_cli || cli.codigo || '---'}</strong></td>
+                    <td>${cli.nombre_cli || cli.nombre || 'SIN NOMBRE'}</td>
+                    <td>${cli.celular_cli || cli.celular || '---'}</td>
+                    <td>${cli.historial ? cli.historial.length : 0} COMPRAS (TOTAL: BS. ${calcularTotalGeneral(cli.historial).toFixed(2)})</td>
+                    <td><button class="btn-detalle" onclick="toggleDetalle(${index})">VER DETALLE</button></td>
+                `;
+                tbody.appendChild(trCliente);
+
+                let trDetalle = document.createElement("tr");
+                trDetalle.className = "detalle-row";
+                trDetalle.id = `detalle_${index}`;
+                
+                let contenidoDetalle = `<td colspan="5"><div class="detalle-container"><h4>DESGLOSE DE COMPRAS</h4>`;
+                
+                if (cli.historial && cli.historial.length > 0) {
+                    contenidoDetalle += `
+                        <table class="sub-table">
+                            <thead>
+                                <tr>
+                                    <th>FECHA / ID</th>
+                                    <th>LUGAR</th>
+                                    <th>DETALLE DE PRODUCTOS</th>
+                                    <th>TOTAL HISTORIAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    cli.historial.forEach(h => {
+                        let listaProd = h.detalles ? h.detalles.map(d => `${d.cantidad_ven}x [${d.codigo_pro}]`).join(", ") : "SIN DETALLE";
+                        contenidoDetalle += `
+                            <tr>
+                                <td>${h.fecha_his || '---'}</td>
+                                <td>${h.lugar_ven || '---'}</td>
+                                <td>${listaProd}</td>
+                                <td><strong>BS. ${h.total_his.toFixed(2)}</strong></td>
+                            </tr>
+                        `;
+                    });
+                    contenidoDetalle += `</tbody></table>`;
+                } else {
+                    contenidoDetalle += `<p style="margin:0; font-size:12px; color:#666;">ESTE CLIENTE AÚN NO REGISTRA COMPRAS.</p>`;
+                }
+                
+                contenidoDetalle += `</div></td>`;
+                trDetalle.innerHTML = contenidoDetalle;
+                tbody.appendChild(trDetalle);
+            });
+
+        } catch (error) {
+            console.error("Error al cargar datos:", error);
+            document.getElementById("tabla_clientes_body").innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">ERROR DE CONEXIÓN CON EL SERVIDOR</td></tr>`;
+        }
+    }
+
+    function calcularTotalGeneral(historial) {
+        if (!historial || historial.length === 0) return 0;
+        return historial.reduce((acc, h) => acc + h.total_his, 0);
+    }
+
+    function toggleDetalle(index) {
+        const filaDetalle = document.getElementById(`detalle_${index}`);
+        if (filaDetalle.style.display === "table-row") {
+            filaDetalle.style.display = "none";
+        } else {
+            filaDetalle.style.display = "table-row";
+        }
+    }
+
+    cargarListaClientes();
+</script>
+
+</body>
+</html>
