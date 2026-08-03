@@ -272,7 +272,7 @@
         <div class="section-title" style="font-size: 13px;">ESCANEA PARA PAGAR</div>
         <img src="qr.jpeg" alt="Código QR" class="qr-img">
         <div class="monto-pagar-text" id="monto_qr_display">TOTAL A PAGAR: BS. 0.00</div>
-        <div style="font-size: 11px; color: #475569; font-weight: bold;">REALIZA TU PAGO POR QR</div>
+        <!--div style="font-size: 11px; color: #475569; font-weight: bold;">REALIZA TU PAGO POR QR</div-->
         <button class="btn-listo" onclick="finalizarCompraExitosa()">LISTO</button>
     </div>
 </div>
@@ -348,7 +348,7 @@
 
         // Construir mensaje de WhatsApp para el número 76260348
         const numeroWhatsApp = "59176260348";
-        const mensaje = `Case soy tú cliente ${nombreClienteActual} hice una compra de ${cantidadTotalProductos} productos y depositare BS. ${montoTotalActual.toFixed(2)} me lo alistas porfa, ya te enviare el comprobante de deposito`;
+        const mensaje = `👋😀...Case soy tú cliente ${nombreClienteActual} hice una compra de ${cantidadTotalProductos} productos y depositare BS. ${montoTotalActual.toFixed(2)} me lo alistas porfa..🙏, ya te enviare el comprobante de deposito💸`;
         const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
 
         // Abrir WhatsApp en una pestaña nueva
@@ -376,7 +376,7 @@
     function regresarInicio() {
         localStorage.clear();
         sessionStorage.clear();
-        window.location.href = "index.html";
+        window.location.href = "galeria.html";
     }
 
     cargarFactura();
