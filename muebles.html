@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #00c6ff, #ffffff);
+            background: linear-gradient(135deg, #fde047, #ca8a04);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -45,17 +45,29 @@
             align-items: center;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
+            gap: 6px;
         }
         .logo-img {
-            max-height: 45px;
+            max-height: 40px;
             object-fit: contain;
+        }
+        .codigo-badge-header {
+            font-size: 15px;
+            font-weight: 800;
+            color: #854d0e;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            background: #fef9c3;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #fde047;
         }
         .product-name-box {
             flex-grow: 1;
-            margin: 0 10px;
+            margin: 0 5px;
             text-align: center;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             border: 1px solid #ccc;
             padding: 6px;
             border-radius: 6px;
@@ -63,7 +75,7 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         .price-box {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #000;
             white-space: nowrap;
@@ -140,27 +152,33 @@
             border-top: 2px solid #eee;
             gap: 6px;
         }
-        .category-indicator {
-            border: 1px solid #00c6ff;
-            background: #e0f7fa;
-            color: #01579b;
-            padding: 8px 6px;
+        .category-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ca8a04;
+            background: #fef9c3;
+            color: #854d0e;
+            padding: 6px 8px;
             border-radius: 6px;
-            font-size: 11px;
             font-weight: bold;
-            text-align: center;
             width: 85px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        .category-title {
+            font-size: 10px;
+        }
+        .category-number {
+            font-size: 13px;
+            color: #000;
+            margin-top: 2px;
         }
         .qty-select {
             padding: 8px;
             font-weight: bold;
             border-radius: 6px;
             border: 1px solid #ccc;
-            width: 60px;
+            width: 55px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
@@ -172,12 +190,12 @@
             font-weight: bold;
             text-align: center;
             background: #fafafa;
-            width: 75px;
+            width: 70px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .mio-btn {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            color: white;
+            background: linear-gradient(135deg, #fde047, #ca8a04);
+            color: #111;
             border: none;
             width: 50px;
             height: 50px;
@@ -246,6 +264,7 @@
     <!-- ENCABEZADO -->
     <div class="header">
         <img src="marisal--2026.png" alt="LOGO" class="logo-img" onerror="this.style.display='none'">
+        <div class="codigo-badge-header" id="header_codigo_cli">---</div>
         <div class="product-name-box" id="nombre_producto">CARGANDO...</div>
         <div class="price-box" id="precio_producto">BS. 0.00</div>
     </div>
@@ -263,7 +282,10 @@
 
     <!-- PIE DE CONTROLES -->
     <div class="footer-controls">
-        <div class="category-indicator">MUEBLES</div>
+        <div class="category-box">
+            <span class="category-title">MUEBLES</span>
+            <span class="category-number" id="num_producto_display">#1</span>
+        </div>
 
         <select id="cantidad_comprar" class="qty-select">
             <!-- Se llena dinámicamente del 1 al 100 -->
@@ -282,7 +304,7 @@
     </div>
 
     <div class="salir-container">
-        <button class="salir-btn" onclick="window.location.href='galeria.html'">SALIR</button>
+        <button class="salir-btn" onclick="salirYRegistrarHistorial()">SALIR</button>
     </div>
 </div>
 
@@ -291,8 +313,21 @@
     let productosMuebles = [];
     let indiceActual = 0;
     let totalCompras = 0;
+    let listaCarritoCompras = [];
 
-    // Llenar lista desplegable del 1 al 100
+    // Recuperar estrictamente el código del cliente autenticado de forma dinámica
+    let clienteGuardado = JSON.parse(localStorage.getItem("cliente_actual") || "{}");
+    let codigoCliActivo = clienteGuardado.codigo || sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cli") || localStorage.getItem("codigo_cliente");
+    
+    if (!codigoCliActivo) {
+        alert("POR FAVOR INGRESA TU CÓDIGO PRIMERO");
+        window.location.href = "index.html";
+    }
+    
+    codigoCliActivo = codigoCliActivo.toUpperCase();
+    localStorage.setItem("codigo_cli", codigoCliActivo);
+    document.getElementById("header_codigo_cli").innerText = codigoCliActivo;
+
     const selectQty = document.getElementById("cantidad_comprar");
     for (let i = 1; i <= 100; i++) {
         let opt = document.createElement("option");
@@ -305,9 +340,13 @@
         try {
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
-            productosMuebles = todos.filter(p => p.imagen_pro && p.imagen_pro.toLowerCase().includes("mueble"));
+            
+            productosMuebles = todos
+                .filter(p => p.imagen_pro && p.imagen_pro.toUpperCase().includes("MUEBLES"))
+                .sort((a, b) => a.imagen_pro.localeCompare(b.imagen_pro, undefined, { numeric: true }));
             
             if (productosMuebles.length > 0) {
+                indiceActual = 0;
                 mostrarProductoActual();
             } else {
                 document.getElementById("nombre_producto").innerText = "SIN PRODUCTOS";
@@ -326,10 +365,12 @@
         document.getElementById("precio_producto").innerText = `BS. ${prod.precio_pro.toFixed(2)}`;
         document.getElementById("stock_producto").innerText = `STOCK: ${prod.cantidad_pro}`;
         
-        let numeroImagen = (indiceActual % 10) + 1;
-        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/mueble_${numeroImagen}.jpeg`;
+        let matchNumero = prod.imagen_pro.match(/\d+/);
+        let numeroReal = matchNumero ? matchNumero[0] : (indiceActual + 1);
+        
+        document.getElementById("num_producto_display").innerText = `#${numeroReal}`;
+        document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/muebles_${numeroReal}.jpeg`;
 
-        // MOSTRAR U OCULTAR LA ETIQUETA DE AGOTADO SEGÚN EL STOCK
         const etiquetaAgotado = document.getElementById("etiqueta_agotado");
         if (prod.cantidad_pro <= 0) {
             etiquetaAgotado.style.display = "block";
@@ -349,7 +390,7 @@
         mostrarProductoActual();
     }
 
-    async function guardarCompra() {
+    function guardarCompra() {
         if (productosMuebles.length === 0) return;
         const prodActual = productosMuebles[indiceActual];
 
@@ -365,41 +406,55 @@
             return;
         }
 
+        totalCompras += cantidadElegida;
+        document.getElementById("cart-counter").innerText = totalCompras;
+
+        listaCarritoCompras.push({
+            codigo_pro: prodActual.codigo_pro,
+            cantidad_ven: cantidadElegida,
+            total_ven: cantidadElegida * prodActual.precio_pro
+        });
+
+        alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+    }
+
+    function verCarrito() {
+        alert(`TIENES ${totalCompras} UNIDADES COMPRADAS EN TOTAL.`);
+    }
+
+    async function salirYRegistrarHistorial() {
+        if (listaCarritoCompras.length === 0) {
+            window.location.href = 'galeria.html';
+            return;
+        }
+
         try {
-            const nuevoStock = prodActual.cantidad_pro - cantidadElegida;
-            const response = await fetch(`${API_URL}/actualizar_stock`, {
+            const totalHis = listaCarritoCompras.reduce((acc, item) => acc + item.total_ven, 0);
+
+            const response = await fetch(`${API_URL}/registrar_historial`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    codigo_pro: prodActual.codigo_pro,
-                    cantidad_pro: nuevoStock
+                    codigo_cli: codigoCliActivo,
+                    lugar_ven: "MUEBLES",
+                    total_his: totalHis,
+                    detalles: listaCarritoCompras
                 })
             });
 
             if (response.ok) {
-                prodActual.cantidad_pro = nuevoStock;
-                document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
-                
-                if (prodActual.cantidad_pro <= 0) {
-                    document.getElementById("etiqueta_agotado").style.display = "block";
-                }
-
-                totalCompras += 1;
-                document.getElementById("cart-counter").innerText = totalCompras;
-                alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+                alert(`¡COMPRAS REGISTRADAS CON ÉXITO EN EL HISTORIAL! Generando factura...`);
+                window.location.href = 'factura.html';
             } else {
-                alert("ERROR AL ACTUALIZAR EL STOCK EN EL SERVIDOR");
+                const errData = await response.json();
+                alert(`Error al registrar historial: ${errData.detail || "Error en el servidor"}`);
             }
         } catch (error) {
-            console.error("Error de red:", error);
-            alert("ERROR DE CONEXIÓN CON EL SERVIDOR");
+            console.error("Error al registrar historial:", error);
+            alert("ERROR DE CONEXIÓN CON EL SERVIDOR AL SALIR.");
         }
-    }
-
-    function verCarrito() {
-        alert(`TIENES ${totalCompras} COMPRAS REALIZADAS EN TOTAL.`);
     }
 
     cargarMuebles();
