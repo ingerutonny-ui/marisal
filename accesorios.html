@@ -315,7 +315,6 @@
     let totalCompras = 0;
     let listaCarritoCompras = [];
 
-    // Recuperar estrictamente el código del cliente autenticado de forma dinámica
     let clienteGuardado = JSON.parse(localStorage.getItem("cliente_actual") || "{}");
     let codigoCliActivo = clienteGuardado.codigo || sessionStorage.getItem("codigo_cliente") || localStorage.getItem("codigo_cli") || localStorage.getItem("codigo_cliente");
     
@@ -390,7 +389,7 @@
         mostrarProductoActual();
     }
 
-    function guardarCompra() {
+    async function guardarCompra() {
         if (productosAccesorios.length === 0) return;
         const prodActual = productosAccesorios[indiceActual];
 
@@ -406,16 +405,44 @@
             return;
         }
 
-        totalCompras += cantidadElegida;
-        document.getElementById("cart-counter").innerText = totalCompras;
+        try {
+            const nuevoStock = prodActual.cantidad_pro - cantidadElegida;
+            const response = await fetch(`${API_URL}/actualizar_stock`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    codigo_pro: prodActual.codigo_pro,
+                    cantidad_pro: nuevoStock
+                })
+            });
 
-        listaCarritoCompras.push({
-            codigo_pro: prodActual.codigo_pro,
-            cantidad_ven: cantidadElegida,
-            total_ven: cantidadElegida * prodActual.precio_pro
-        });
+            if (response.ok) {
+                prodActual.cantidad_pro = nuevoStock;
+                document.getElementById("stock_producto").innerText = `STOCK: ${prodActual.cantidad_pro}`;
+                
+                if (prodActual.cantidad_pro <= 0) {
+                    document.getElementById("etiqueta_agotado").style.display = "block";
+                }
 
-        alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+                totalCompras += cantidadElegida;
+                document.getElementById("cart-counter").innerText = totalCompras;
+
+                listaCarritoCompras.push({
+                    codigo_pro: prodActual.codigo_pro,
+                    cantidad_ven: cantidadElegida,
+                    total_ven: cantidadElegida * prodActual.precio_pro
+                });
+
+                alert(`SE REGISTRÓ "${prodActual.nombre_pro}" (${cantidadElegida} UNIDADES) A TU COMPRA`);
+            } else {
+                alert("ERROR AL ACTUALIZAR EL STOCK EN EL SERVIDOR");
+            }
+        } catch (error) {
+            console.error("Error de red:", error);
+            alert("ERROR DE CONEXIÓN CON EL SERVIDOR");
+        }
     }
 
     function verCarrito() {
