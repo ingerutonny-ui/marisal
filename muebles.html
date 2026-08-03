@@ -340,8 +340,9 @@
             const response = await fetch(`${API_URL}/listar_productos`);
             const todos = await response.json();
             
+            // FILTRAR POR "MUEBLE" (EN SINGULAR, tal como está en la BD)
             productosMuebles = todos
-                .filter(p => p.imagen_pro && p.imagen_pro.toUpperCase().includes("MUEBLES"))
+                .filter(p => p.imagen_pro && p.imagen_pro.toUpperCase().includes("MUEBLE"))
                 .sort((a, b) => a.imagen_pro.localeCompare(b.imagen_pro, undefined, { numeric: true }));
             
             if (productosMuebles.length > 0) {
@@ -368,6 +369,7 @@
         let numeroReal = matchNumero ? matchNumero[0] : (indiceActual + 1);
         
         document.getElementById("num_producto_display").innerText = `#${numeroReal}`;
+        // URL ACTUALIZADA CON EXTENSIÓN .jpg (MUEBLE_X.JPG)
         document.getElementById("imagen_producto").src = `https://ingerutonny-ui.github.io/marisal/galeria/mueble_${numeroReal}.jpg`;
 
         const etiquetaAgotado = document.getElementById("etiqueta_agotado");
