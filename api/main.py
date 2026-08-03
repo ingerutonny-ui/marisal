@@ -368,57 +368,64 @@ def cancelar_compra(codigo_his: int):
 
 @app.get("/api/listar_clientes_con_compras")
 def listar_clientes_con_compras():
-    conn = obtener_conexion()
+    conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # 1. Obtener todos los clientes (ajusta los nombres de las tablas y campos según tu BD)
-    cursor.execute("SELECT codigo_cli, nombre_cli, celular_cli FROM cliente_ms")
-    clientes_db = cursor.fetchall()
-    
-    resultado = []
-    for cli in clientes_db:
-        codigo_cli, nombre_cli, celular_cli = cli
+    try:
+        # 1. Obtener todos los clientes usando el nombre de columna real (num_cel_cli)
+        cursor.execute("SELECT codigo_cli, nombre_cli, num_cel_cli FROM cliente_ms")
+        clientes_db = cursor.fetchall()
         
-        # 2. Obtener el historial de compras de este cliente
-        cursor.execute("""
-            SELECT id_his, fecha_his, lugar_ven, total_his 
-            FROM historial_ms 
-            WHERE codigo_cli = %s
-        """, (codigo_cli,))
-        historiales_db = cursor.fetchall()
-        
-        lista_historial = []
-        for his in historiales_db:
-            id_his, fecha_his, lugar_ven, total_his = his
+        resultado = []
+        for cli in clientes_db:
+            codigo_cli, nombre_cli, celular_cli = cli
             
-            # 3. Obtener los detalles de cada compra en el historial
+            # 2. Obtener el historial de compras usando codigo_his
             cursor.execute("""
-                SELECT codigo_pro, cantidad_ven, total_ven 
-                FROM detalle_historial_ms 
-                WHERE id_his = %s
-            """, (id_his,))
-            detalles_db = cursor.fetchall()
+                SELECT codigo_his, fecha_his, lugar_ven, total_his 
+                FROM historial_ms 
+                WHERE codigo_cli = %s
+            """, (codigo_cli,))
+            historiales_db = cursor.fetchall()
             
-            lista_detalles = [
-                {"codigo_pro": d[0], "cantidad_ven": d[1], "total_ven": d[2]} 
-                for d in detalles_db
-            ]
-            
-            lista_historial.append({
-                "id_his": id_his,
-                "fecha_his": str(fecha_his),
-                "lugar_ven": lugar_ven,
-                "total_his": total_his,
-                "detalles": lista_detalles
+            lista_historial = []
+            for his in historiales_db:
+                id_his, fecha_his, lugar_ven, total_his = his
+                
+                # 3. Obtener los detalles desde la tabla venta_ms
+                cursor.execute("""
+                    SELECT codigo_pro, cantidad_ven, total_ven 
+                    FROM venta_ms 
+                    WHERE codigo_his = %s
+                """, (id_his,))
+                detalles_db = cursor.fetchall()
+                
+                lista_detalles = [
+                    {
+                        "codigo_pro": d[0], 
+                        "cantidad_ven": d[1], 
+                        "total_ven": float(d[2]) if d[2] is not None else 0.0
+                    } 
+                    for d in detalles_db
+                ]
+                
+                lista_historial.append({
+                    "id_his": id_his,
+                    "fecha_his": str(fecha_his),
+                    "lugar_ven": lugar_ven,
+                    "total_his": float(total_his) if total_his is not None else 0.0,
+                    "detalles": lista_detalles
+                })
+                
+            resultado.append({
+                "codigo_cli": codigo_cli,
+                "nombre_cli": nombre_cli,
+                "celular_cli": celular_cli,
+                "historial": lista_historial
             })
             
-        resultado.append({
-            "codigo_cli": codigo_cli,
-            "nombre_cli": nombre_cli,
-            "celular_cli": celular_cli,
-            "historial": lista_historial
-        })
-        
-    cursor.close()
-    conn.close()
-    return resultado
+        return resultado
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
