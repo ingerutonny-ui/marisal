@@ -47,7 +47,7 @@
         /* TAMAÑO ADAPTABLE: Pequeño en celulares, grande en PC */
         .loading-logo {
             width: 85%;
-            max-width: 550px; /* Tamaño grande para PC */
+            max-width: 550px;
             height: auto;
             margin-bottom: 25px;
             filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.12));
@@ -55,7 +55,7 @@
 
         .progress-bar-container {
             width: 80%;
-            max-width: 450px; /* Tamaño grande para PC */
+            max-width: 450px;
             height: 12px;
             background: #e2e8f0;
             border-radius: 6px;
@@ -108,11 +108,17 @@
             display: flex;
             justify-content: center;
             margin-bottom: -5px;
+            cursor: pointer; /* Indica que es interactivo */
         }
 
         .logo-container img {
             width: 180px;
             height: auto;
+            transition: transform 0.2s ease;
+        }
+
+        .logo-container img:active {
+            transform: scale(0.95);
         }
 
         h2 {
@@ -242,7 +248,8 @@
     </div>
 
     <div class="login-card">
-        <div class="logo-container">
+        <!-- LOGO CON ACCESO SECRETO DE 3 CLICS -->
+        <div class="logo-container" id="adminTrigger" onclick="manejarClicLogo()" title="MARISAL">
             <img src="marisal--2026.png" alt="LOGO MARISAL">
         </div>
 
@@ -250,7 +257,8 @@
 
         <div class="input-group">
             <label for="codigo_cliente">TU CÓDIGO CASE:</label>
-            <input type="text" id="codigo_cliente" placeholder="EJ: RA82" autocomplete="off">
+            <!-- maxlength="5" para que apenas escriba o complete 5 caracteres evalúe/haga algo o control de longitud -->
+            <input type="text" id="codigo_cliente" placeholder="EJ: RA82" autocomplete="off" oninput="verificarAutoIngreso(this)">
         </div>
 
         <div class="input-group">
@@ -304,6 +312,46 @@
         window.onload = function() {
             generarCaptcha();
         };
+
+        // --- SISTEMA DE CLICS SECRETOS EN EL LOGO (3 CLICS RÁPIDOS) ---
+        let contadorClicsLogo = 3; // Puedes ajustar el tiempo límite entre clics (en milisegundos)
+        let tiempoUltimoClic = 0;
+
+        function manejarClicLogo() {
+            const ahora = new Date().getTime();
+            if (ahora - tiempoUltimoClic > 600) { // Si pasa más de 0.6 segundos, se reinicia la cuenta
+                contadorClicsLogo = 1;
+            } else {
+                contadorClicsLogo++;
+            }
+            tiempoUltimoClic = ahora;
+
+            if (contadorClicsLogo === 3) {
+                contadorClicsLogo = 0;
+                solicitarAccesoAdmin();
+            }
+        }
+
+        function solicitarAccesoAdmin() {
+            const passwordAdmin = prompt("ACCESO ADMINISTRATIVA - INGRESE CONTRASEÑA:");
+            // Define aquí la contraseña de la dueña (ejemplo: "MARISAL2026")
+            if (passwordAdmin === "MARISAL2026") {
+                alert("ACCESSO CONCEDIDO A MÓDULO DE ADMINISTRACIÓN");
+                window.location.href = "re_imagen.html"; // O tu vista de administración
+            } else {
+                alert("CONTRASEÑA INCORRECTA. RECARGANDO...");
+                window.location.reload(); // Recarga index.html si falla
+            }
+        }
+
+        // --- AUTO-INGRESO SI LLEGA A 5 CARACTERES (Opcional inteligente) ---
+        function verificarAutoIngreso(input) {
+            // Si el código del cliente llega a una longitud de 5 caracteres, intenta validar solo o puedes adaptarlo
+            if (input.value.length >= 5) {
+                // Opcional: Podrías disparar automáticamente verificarAcceso si el captcha ya estuviera lleno, 
+                // pero por seguridad dejamos que el usuario llene el captcha o presione el botón.
+            }
+        }
 
         async function verificarAcceso() {
             const codigo = document.getElementById("codigo_cliente").value.trim().toUpperCase();
