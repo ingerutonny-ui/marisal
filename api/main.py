@@ -429,3 +429,50 @@ def listar_clientes_con_compras():
     finally:
         cursor.close()
         conn.close()
+
+@app.put("/api/actualizar_producto")
+def actualizar_producto(data: dict):
+    codigo = data.get("codigo_pro")
+    nombre = data.get("nombre_pro")
+    precio = data.get("precio_pro")
+    imagen = data.get("imagen_pro")
+    color = data.get("color_pro")
+    cantidad = data.get("cantidad_pro")
+
+    if not codigo or not nombre or precio is None or not imagen or not color or cantidad is None:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios para la actualización.")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Verificar si el producto existe
+        cursor.execute("SELECT * FROM producto_ms WHERE codigo_pro = %s", (str(codigo).upper(),))
+        if not cursor.fetchone():
+            raise HTTPException(status_code=404, detail="El producto no existe en el sistema.")
+
+        # Actualizar los datos del producto
+        cursor.execute(
+            """
+            UPDATE producto_ms 
+            SET nombre_pro = %s, precio_pro = %s, imagen_pro = %s, color_pro = %s, cantidad_pro = %s 
+            WHERE codigo_pro = %s
+            """,
+            (str(nombre).upper(), float(precio), str(imagen), str(color).upper(), int(cantidad), str(codigo).upper())
+        )
+        conn.commit()
+        return {
+            "mensaje": "Producto actualizado exitosamente",
+            "codigo": str(codigo).upper()
+        }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
