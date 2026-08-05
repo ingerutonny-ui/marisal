@@ -319,7 +319,7 @@
 
         function manejarClicLogo() {
             const ahora = new Date().getTime();
-            if (ahora - tiempoUltimoClic > 400) { // Si pasa más de 0.6 segundos, se reinicia la cuenta
+            if (ahora - tiempoUltimoClic > 600) { // Si pasa más de 0.6 segundos, se reinicia la cuenta
                 contadorClicsLogo = 1;
             } else {
                 contadorClicsLogo++;
