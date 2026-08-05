@@ -38,7 +38,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             transform-origin: center;
         }
 
@@ -57,15 +57,26 @@
         }
 
         .logo-container img {
-            width: 240px; /* Logo más grande ocupando el espacio superior */
+            width: 240px;
             height: auto;
         }
 
-        .btn-menu {
+        /* Contenedor para colocar los botones lado a lado */
+        .buttons-container {
+            display: flex;
+            gap: 15px;
             width: 100%;
-            padding: 14px;
+        }
+
+        .btn-menu {
+            flex: 1;
+            aspect-ratio: 1; /* Hace que los botones sean cuadrados perfectos */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             border: none;
-            border-radius: 12px;
+            border-radius: 18px; /* Puntas redondeadas estéticas */
             font-size: 14px;
             font-weight: bold;
             letter-spacing: 1px;
@@ -83,7 +94,7 @@
 
         .btn-productos:hover {
             opacity: 0.95;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
         }
 
@@ -94,7 +105,7 @@
 
         .btn-clientes:hover {
             opacity: 0.95;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(0, 191, 255, 0.4);
         }
 
@@ -123,9 +134,10 @@
             <img src="marisal--2026.png" alt="LOGO MARISAL">
         </div>
 
-        <a href="re_imagen.html" class="btn-menu btn-productos">PRODUCTOS</a>
-        
-        <a href="lista.html" class="btn-menu btn-clientes">CLIENTES</a>
+        <div class="buttons-container">
+            <a href="re_imagen.html" class="btn-menu btn-productos">PRODUCTOS</a>
+            <a href="lista.html" class="btn-menu btn-clientes">CLIENTES</a>
+        </div>
 
         <div class="back-link">
             <a href="index.html">VOLVER AL INICIO</a>
