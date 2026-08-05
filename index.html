@@ -331,28 +331,51 @@
                 solicitarAccesoAdmin();
             }
         }
-
+        
         function solicitarAccesoAdmin() {
-            const passwordAdmin = prompt("TÚ CODIGO CASE...:");
-            // Define aquí la contraseña de la dueña (ejemplo: "MARISAL2026")
+            // Muestra nuestro cuadro modal personalizado en lugar del prompt nativo
+            document.getElementById("modalAdmin").style.display = "flex";
+            document.getElementById("inputPasswordAdmin").value = "";
+            document.getElementById("inputPasswordAdmin").focus();
+        }
+
+        function cerrarModalAdmin() {
+            document.getElementById("modalAdmin").style.display = "none";
+            window.location.reload();
+        }
+
+        function validarPasswordAdmin() {
+            const passwordAdmin = document.getElementById("inputPasswordAdmin").value;
             if (passwordAdmin === "MARISAL2026") {
-                alert("GRACIAS CASE...");
-                window.location.href = "duenia.html"; // O tu vista de administración
+                window.location.href = "re_imagen.html";
             } else {
-                alert("");
-                window.location.reload(); // Recarga index.html si falla
+                alert("CONTRASEÑA INCORRECTA.");
+                document.getElementById("inputPasswordAdmin").value = "";
+                document.getElementById("inputPasswordAdmin").focus();
             }
         }
+//----------------------------------------------------------------------------------------------
+//        function solicitarAccesoAdmin() {
+ //           const passwordAdmin = prompt("...:");
+ //           // Define aquí la contraseña de la dueña (ejemplo: "MARISAL2026")
+  //          if (passwordAdmin === "MARISAL2026") {
+  //              alert("GRACIAS CASE...");
+  //              window.location.href = "duenia.html"; // O tu vista de administración
+   //         } else {
+    //            alert("");
+     //           window.location.reload(); // Recarga index.html si falla
+      //      }
+       // }
 
         // --- AUTO-INGRESO SI LLEGA A 5 CARACTERES (Opcional inteligente) ---
-        function verificarAutoIngreso(input) {
+//        function verificarAutoIngreso(input) {
             // Si el código del cliente llega a una longitud de 5 caracteres, intenta validar solo o puedes adaptarlo
-            if (input.value.length >= 5) {
+//            if (input.value.length >= 5) {
                 // Opcional: Podrías disparar automáticamente verificarAcceso si el captcha ya estuviera lleno, 
                 // pero por seguridad dejamos que el usuario llene el captcha o presione el botón.
-            }
-        }
-
+  //          }
+   //     }
+//----------------------------------------------------------------------------------------------------------------
         async function verificarAcceso() {
             const codigo = document.getElementById("codigo_cliente").value.trim().toUpperCase();
             const captchaIngresado = document.getElementById("inputCaptcha").value.trim().toUpperCase();
@@ -389,5 +412,16 @@
             }
         }
     </script>
+<!-- MODAL SECRETO DE ADMINISTRACIÓN -->
+<div id="modalAdmin" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(5px); z-index:10000; justify-content:center; align-items:center;">
+    <div style="background:white; padding:25px; border-radius:16px; width:90%; max-width:320px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3);">
+        <input type="password" id="inputPasswordAdmin" placeholder="CONTRASEÑA" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:15px; text-align:center; text-transform:none;">
+        <div style="display:flex; gap:10px;">
+            <button onclick="validarPasswordAdmin()" style="flex:1; padding:10px; background:#28a745; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ENTRAR</button>
+            <button onclick="cerrarModalAdmin()" style="flex:1; padding:10px; background:#dc3545; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">CANCELAR</button>
+        </div>
+    </div>
+</div>
+    
 </body>
 </html>
