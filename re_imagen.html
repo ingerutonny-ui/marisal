@@ -58,6 +58,21 @@
         button[type="submit"]:hover {
             opacity: 0.9;
         }
+        .btn-cancelar {
+            width: 100%;
+            padding: 8px;
+            background: #6c757d;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            display: none;
+        }
+        .btn-cancelar:hover {
+            background: #5a6268;
+        }
         #mensaje {
             text-align: center;
             margin-top: 15px;
@@ -87,16 +102,29 @@
             border-radius: 4px;
             cursor: pointer;
             text-transform: none;
+            margin-right: 5px;
         }
         .btn-eliminar:hover {
             background: #c82333;
+        }
+        .btn-editar {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: none;
+        }
+        .btn-editar:hover {
+            background: #e0a800;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>REGISTRAR PRODUCTO</h2>
+    <h2 id="tituloForm">REGISTRAR PRODUCTO</h2>
     
     <form id="productoForm">
         <div class="form-group">
@@ -155,7 +183,7 @@
 
         <div class="form-group">
             <label>NOMBRE DEL PRODUCTO:</label>
-            <input type="text" id="nombre_pro" required oninput="forzarMayusculas(this); actualizarCodigoAutomaticO();">
+            <input type="text" id="nombre_pro" required oninput="forzarMayusculas(this); actualizarCodigoAutomatico();">
         </div>
 
         <div class="form-group">
@@ -173,7 +201,8 @@
             <input type="number" id="cantidad_pro" required>
         </div>
 
-        <button type="submit">GUARDAR PRODUCTO</button>
+        <button type="submit" id="btnSubmit">GUARDAR PRODUCTO</button>
+        <button type="button" id="btnCancelar" class="btn-cancelar" onclick="cancelarEdicion()">CANCELAR EDICIÓN</button>
         <div id="mensaje"></div>
     </form>
 
@@ -197,6 +226,7 @@
 
 <script>
     const API_URL = "https://marisal.onrender.com/api";
+    let modoEdicion = false;
 
     function forzarMayusculas(elemento) {
         elemento.value = elemento.value.toUpperCase();
@@ -216,7 +246,8 @@
         return nombreArchivo.substring(0, nombreArchivo.lastIndexOf(".")).toUpperCase();
     }
 
-    function actualizarCodigoAutomaticO() {
+    function actualizarCodigoAutomatico() {
+        if (modoEdicion) return; // No cambia el código automáticamente si estamos editando
         const imagen = document.getElementById("imagen_pro").value;
         const nombre = document.getElementById("nombre_pro").value.trim().toUpperCase();
         const prefijo = obtenerPrefijo(imagen);
@@ -247,13 +278,41 @@
                     <td>Bs. ${prod.precio_pro.toFixed(2)}</td>
                     <td>${prod.color_pro}</td>
                     <td>${prod.cantidad_pro}</td>
-                    <td><button class="btn-eliminar" onclick="eliminarProducto('${prod.codigo_pro}')">Eliminar</button></td>
+                    <td>
+                        <button class="btn-editar" onclick='prepararEdicion(${JSON.stringify(prod)})'>Editar</button>
+                        <button class="btn-eliminar" onclick="eliminarProducto('${prod.codigo_pro}')">Eliminar</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         } catch (error) {
             console.error("Error al cargar productos:", error);
         }
+    }
+
+    function prepararEdicion(prod) {
+        modoEdicion = true;
+        document.getElementById("tituloForm").innerText = "EDITAR PRODUCTO";
+        document.getElementById("btnSubmit").innerText = "ACTUALIZAR PRODUCTO";
+        document.getElementById("btnCancelar").style.display = "block";
+
+        document.getElementById("codigo_pro").value = prod.codigo_pro;
+        document.getElementById("imagen_pro").value = prod.imagen_pro;
+        document.getElementById("nombre_pro").value = prod.nombre_pro;
+        document.getElementById("precio_pro").value = prod.precio_pro;
+        document.getElementById("color_pro").value = prod.color_pro;
+        document.getElementById("cantidad_pro").value = prod.cantidad_pro;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelarEdicion() {
+        modoEdicion = false;
+        document.getElementById("tituloForm").innerText = "REGISTRAR PRODUCTO";
+        document.getElementById("btnSubmit").innerText = "GUARDAR PRODUCTO";
+        document.getElementById("btnCancelar").style.display = "none";
+        document.getElementById("productoForm").reset();
+        document.getElementById("codigo_pro").value = "";
     }
 
     document.getElementById("productoForm").addEventListener("submit", async function(e) {
@@ -271,8 +330,11 @@
         const msgDiv = document.getElementById("mensaje");
 
         try {
-            const response = await fetch(`${API_URL}/registrar_producto`, {
-                method: "POST",
+            const endpoint = modoEdicion ? `${API_URL}/actualizar_producto` : `${API_URL}/registrar_producto`;
+            const method = modoEdicion ? "PUT" : "POST";
+
+            const response = await fetch(endpoint, {
+                method: method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
@@ -281,13 +343,12 @@
 
             if (response.ok) {
                 msgDiv.style.color = "green";
-                msgDiv.innerText = "PRODUCTO REGISTRADO EXITOSAMENTE";
-                document.getElementById("productoForm").reset();
-                document.getElementById("codigo_pro").value = "";
+                msgDiv.innerText = modoEdicion ? "PRODUCTO ACTUALIZADO EXITOSAMENTE" : "PRODUCTO REGISTRADO EXITOSAMENTE";
+                cancelarEdicion();
                 cargarProductos();
             } else {
                 msgDiv.style.color = "red";
-                msgDiv.innerText = result.detail || "Error al registrar";
+                msgDiv.innerText = result.detail || "Error al procesar la solicitud";
             }
         } catch (error) {
             msgDiv.style.color = "red";
